@@ -16,7 +16,7 @@ export default function WasteBotTable() {
     model: "",
     status: "Inactive",
     location: "",
-    autonomy: null, // Add autonomy field
+    autonomy: null, 
   });
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -299,12 +299,12 @@ export default function WasteBotTable() {
                 <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                   theme === "dark" ? "text-gray-300" : "text-gray-500"
                 }`}>
-                  WasteBot ID
+                  ID
                 </th>
                 <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                   theme === "dark" ? "text-gray-300" : "text-gray-500"
                 }`}>
-                  WasteBot ID
+                  Model
                 </th>
                 <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                   theme === "dark" ? "text-gray-300" : "text-gray-500"
@@ -315,6 +315,11 @@ export default function WasteBotTable() {
                   theme === "dark" ? "text-gray-300" : "text-gray-500"
                 }`}>
                   Location
+                </th>
+                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-500"
+                }`}>
+                  Autonomy
                 </th>
                 <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                   theme === "dark" ? "text-gray-300" : "text-gray-500"
@@ -370,6 +375,11 @@ export default function WasteBotTable() {
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"
                   }`}>
+                    {bot.autonomy} mAh
+                  </td>
+                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-500"
+                  }`}>
                     <button
                       onClick={() => handleToggleStatus(bot.id, bot.status)}
                       className={`p-2 rounded-full ${
@@ -400,6 +410,10 @@ export default function WasteBotTable() {
             </tbody>
           </table>
         </div>
+
+
+
+
 
         {/* Pagination */}
         <div className={`flex justify-between items-center p-4 border-t ${

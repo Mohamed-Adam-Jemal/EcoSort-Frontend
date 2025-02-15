@@ -13,9 +13,10 @@ export default function SmartBinTable() {
   const [error, setError] = useState(null); // State to manage errors
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const [formData, setFormData] = useState({
-    status: "",
+    status: "Inactive",
+    cover: "Closed",
     location: "",
-    capacity: "",
+    capacity: 0,
   }); // State to store form data
 
   // Pagination state
@@ -92,12 +93,35 @@ export default function SmartBinTable() {
 
       // Reset form data
       setFormData({
-        status: "",
+        status: "Inactive",
+        cover: "Closed",
         location: "",
-        capacity: "",
+        capacity: 0,
       });
     } catch (error) {
       console.error("Error adding SmartBin:", error);
+    }
+  };
+
+  // Toggle cover status
+  const toggleCover = async (smartBinId, currentCoverStatus) => {
+    // Invert the cover status for the backend
+    const newCoverStatus = currentCoverStatus === "Closed" ? "Opened" : "Closed";
+
+    try {
+      // Send a PATCH request to update the cover status
+      await axios.patch(`http://127.0.0.1:8000/smartbins/${smartBinId}/`, {
+        cover: newCoverStatus,
+      });
+
+      // Update the SmartBin data in state
+      setSmartBinData((prevData) =>
+        prevData.map((bin) =>
+          bin.id === smartBinId ? { ...bin, cover: newCoverStatus } : bin
+        )
+      );
+    } catch (error) {
+      console.error("Error toggling cover:", error);
     }
   };
 
@@ -173,10 +197,8 @@ export default function SmartBinTable() {
                   } p-1 text-sm`}
                   required
                 >
-                  <option value="" disabled>Select a status</option>
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
-                  <option value="Maintenance">Maintenance</option>
                 </select>
               </div>
 
@@ -204,7 +226,7 @@ export default function SmartBinTable() {
                 <label className={`block text-xs font-medium ${
                   theme === "dark" ? "text-gray-300" : "text-gray-700"
                 }`}>
-                  Capacity
+                  Capacity (L)
                 </label>
                 <input
                   type="number"
@@ -295,6 +317,11 @@ export default function SmartBinTable() {
                 <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                   theme === "dark" ? "text-gray-300" : "text-gray-500"
                 }`}>
+                  Cover Status
+                </th>
+                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-500"
+                }`}>
                   Location
                 </th>
                 <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
@@ -330,13 +357,24 @@ export default function SmartBinTable() {
                       className={`px-2 py-1 text-xs font-semibold rounded-full ${
                         bin.status === "Active"
                           ? "bg-green-100 text-green-800"
-                          : bin.status === "Inactive"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-yellow-100 text-yellow-800"
+                          : "bg-red-100 text-red-800"
                       }`}
                     >
                       {bin.status}
                     </span>
+                  </td>
+                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-500"
+                  }`}>
+                    <button
+                      onClick={() => toggleCover(bin.id, bin.cover)}
+                      className={`px-3 py-1 text-xs font-medium rounded-md ${
+                        theme === "dark" ? "bg-gray-600 hover:bg-gray-500" : "bg-gray-200 hover:bg-gray-300"
+                      }`}
+                      title={bin.cover === "Closed" ? "Click to Open" : "Click to Close"} 
+                    >
+                      {bin.cover}
+                    </button>
                   </td>
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"
@@ -346,7 +384,7 @@ export default function SmartBinTable() {
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"
                   }`}>
-                    {bin.capacity}
+                    {bin.capacity} L
                   </td>
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"
