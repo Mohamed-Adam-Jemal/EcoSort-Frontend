@@ -1,91 +1,45 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios"; // Import axios for HTTP requests
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { useTheme } from "../../context/ThemeContext"; // Import the useTheme hook
 import { FaTrash, FaPlus } from "react-icons/fa"; // Import icons
 
 export default function SmartBinTable() {
-  // Sample SmartBin data (replace with data from your backend)
-  const smartBinData = [
-    {
-      smartBinId: 1,
-      status: "Active",
-      location: "Zone A",
-      capacity: "100L",
-      fillLevel: "75%",
-      temperature: "25°C",
-      humidity: "60%",
-    },
-    {
-      smartBinId: 2,
-      status: "Inactive",
-      location: "Zone B",
-      capacity: "100L",
-      fillLevel: "45%",
-      temperature: "22°C",
-      humidity: "55%",
-    },
-    {
-      smartBinId: 3,
-      status: "Active",
-      location: "Zone C",
-      capacity: "100L",
-      fillLevel: "90%",
-      temperature: "28°C",
-      humidity: "65%",
-    },
-    {
-      smartBinId: 4,
-      status: "Maintenance",
-      location: "Zone D",
-      capacity: "100L",
-      fillLevel: "10%",
-      temperature: "20°C",
-      humidity: "50%",
-    },
-    {
-      smartBinId: 5,
-      status: "Active",
-      location: "Zone E",
-      capacity: "100L",
-      fillLevel: "80%",
-      temperature: "26°C",
-      humidity: "62%",
-    },
-    {
-      smartBinId: 6,
-      status: "Inactive",
-      location: "Zone F",
-      capacity: "100L",
-      fillLevel: "30%",
-      temperature: "21°C",
-      humidity: "58%",
-    },
-    {
-      smartBinId: 7,
-      status: "Active",
-      location: "Zone G",
-      capacity: "100L",
-      fillLevel: "95%",
-      temperature: "29°C",
-      humidity: "67%",
-    },
-    {
-      smartBinId: 8,
-      status: "Maintenance",
-      location: "Zone H",
-      capacity: "100L",
-      fillLevel: "5%",
-      temperature: "19°C",
-      humidity: "48%",
-    },
-  ];
+  const [smartBinData, setSmartBinData] = useState([]); // State to store SmartBin data
+  const [loading, setLoading] = useState(true); // State to manage loading
+  const [error, setError] = useState(null); // State to manage errors
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const [formData, setFormData] = useState({
+    status: "",
+    location: "",
+    capacity: "",
+  }); // State to store form data
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(5); // Number of rows per page
+
+  // Use the theme context
+  const { theme } = useTheme();
+
+  // Fetch SmartBin data from the backend
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/smartbins/");
+        setSmartBinData(response.data); // Update data
+        setLoading(false); // Disable loading
+      } catch (error) {
+        setError(error.message); // Display error
+        setLoading(false); // Disable loading
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   // Calculate paginated data
   const indexOfLastRow = currentPage * rowsPerPage;
@@ -93,34 +47,203 @@ export default function SmartBinTable() {
   const currentRows = smartBinData.slice(indexOfFirstRow, indexOfLastRow);
 
   // Change page
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   // Calculate total number of pages
   const totalPages = Math.ceil(smartBinData.length / rowsPerPage);
 
-  // Use the theme context
-  const { theme } = useTheme();
-
-  // Handle delete action (to be linked to an HTTP DELETE request later)
-  const handleDelete = (smartBinId: number) => {
-    console.log(`Delete SmartBin with ID: ${smartBinId}`);
-    // Add your DELETE request logic here
+  // Handle SmartBin deletion
+  const handleDelete = async (smartBinId) => {
+    try {
+      await axios.delete(`http://127.0.0.1:8000/smartbins/${smartBinId}/`);
+      // Remove the SmartBin from state
+      setSmartBinData(smartBinData.filter((bin) => bin.id !== smartBinId));
+    } catch (error) {
+      console.error("Error deleting SmartBin:", error);
+    }
   };
 
-  // Handle add SmartBin action (to be linked to a form or modal later)
+  // Open the modal to add a SmartBin
   const handleAddSmartBin = () => {
-    console.log("Add a new SmartBin");
-    // Add your logic to open a form or modal for adding a SmartBin
+    setIsModalOpen(true);
   };
+
+  // Handle input changes in the form
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Send a POST request to add a new SmartBin
+      const response = await axios.post("http://127.0.0.1:8000/smartbins/", formData);
+
+      // Add the new SmartBin to the state
+      setSmartBinData([...smartBinData, response.data]);
+
+      // Close the modal
+      setIsModalOpen(false);
+
+      // Reset form data
+      setFormData({
+        status: "",
+        location: "",
+        capacity: "",
+      });
+    } catch (error) {
+      console.error("Error adding SmartBin:", error);
+    }
+  };
+
+  // Display loading state
+  if (loading) {
+    return (
+      <div className={`p-6 ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"} min-h-screen`}>
+        <PageMeta
+          title="SmartBin Management Dashboard | EcoSort"
+          description="SmartBin management page for EcoSort - React.js dashboard template with Tailwind CSS"
+        />
+        <PageBreadcrumb pageTitle="SmartBin Management" />
+        <div className="flex justify-center items-center h-64">
+          <p className={`text-lg ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
+            Loading...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Display error state
+  if (error) {
+    return (
+      <div className={`p-6 ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"} min-h-screen`}>
+        <PageMeta
+          title="SmartBin Management Dashboard | EcoSort"
+          description="SmartBin management page for EcoSort - React.js dashboard template with Tailwind CSS"
+        />
+        <PageBreadcrumb pageTitle="SmartBin Management" />
+        <div className="flex justify-center items-center h-64">
+          <p className={`text-lg text-red-500`}>
+            Error: {error}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`p-6 ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"} min-h-screen`}>
       <PageMeta
         title="SmartBin Management Dashboard | EcoSort"
-        description="This is the SmartBin Management Dashboard page for EcoSort - React.js Tailwind CSS Admin Dashboard Template"
+        description="SmartBin management page for EcoSort - React.js dashboard template with Tailwind CSS"
       />
       <PageBreadcrumb pageTitle="SmartBin Management" />
 
+      {/* Modal to add a SmartBin */}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30" style={{ paddingTop: '5rem' }}>
+          <div className={`rounded-lg shadow-md p-6 w-80 ${
+            theme === "dark" ? "bg-gray-800" : "bg-white"
+          }`}>
+            <h2 className={`text-lg font-semibold mb-4 ${
+              theme === "dark" ? "text-gray-100" : "text-gray-800"
+            }`}>
+              Add a SmartBin
+            </h2>
+            <form onSubmit={handleSubmit}>
+              {/* Status Field */}
+              <div className="mb-3">
+                <label className={`block text-xs font-medium ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-700"
+                }`}>
+                  Status
+                </label>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleInputChange}
+                  className={`mt-1 block w-full rounded-md border ${
+                    theme === "dark" ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"
+                  } p-1 text-sm`}
+                  required
+                >
+                  <option value="" disabled>Select a status</option>
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                  <option value="Maintenance">Maintenance</option>
+                </select>
+              </div>
+
+              {/* Location Field */}
+              <div className="mb-3">
+                <label className={`block text-xs font-medium ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-700"
+                }`}>
+                  Location
+                </label>
+                <input
+                  type="text"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleInputChange}
+                  className={`mt-1 block w-full rounded-md border ${
+                    theme === "dark" ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"
+                  } p-1 text-sm`}
+                  required
+                />
+              </div>
+
+              {/* Capacity Field */}
+              <div className="mb-3">
+                <label className={`block text-xs font-medium ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-700"
+                }`}>
+                  Capacity
+                </label>
+                <input
+                  type="number"
+                  name="capacity"
+                  value={formData.capacity}
+                  onChange={handleInputChange}
+                  className={`mt-1 block w-full rounded-md border ${
+                    theme === "dark" ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"
+                  } p-1 text-sm`}
+                  required
+                />
+              </div>
+
+              {/* Form Buttons */}
+              <div className="flex justify-end" style={{ marginTop: '1rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className={`mr-2 px-3 py-1 text-xs font-medium rounded-md ${
+                    theme === "dark" ? "bg-gray-600 hover:bg-gray-500" : "bg-gray-200 hover:bg-gray-300"
+                  }`}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className={`px-3 py-1 text-xs font-medium rounded-md ${
+                    theme === "dark" ? "bg-blue-600 hover:bg-blue-500" : "bg-blue-500 hover:bg-blue-600"
+                  } text-white`}
+                >
+                  Add
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Main Table */}
       <div className={`rounded-lg shadow-md overflow-hidden ${
         theme === "dark" ? "bg-gray-800" : "bg-white"
       }`}>
@@ -137,7 +260,7 @@ export default function SmartBinTable() {
             <p className={`text-sm ${
               theme === "dark" ? "text-gray-400" : "text-gray-500"
             }`}>
-              Overview of SmartBin status and metrics.
+              Overview of SmartBin statuses and metrics.
             </p>
           </div>
           <div>
@@ -147,7 +270,7 @@ export default function SmartBinTable() {
                 theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-200"
               }`}
             >
-              <FaPlus className="text-green-500" /> {/* Plus Icon */}
+              <FaPlus className="text-green-500" /> {/* Add Icon */}
             </button>
           </div>
         </div>
@@ -182,21 +305,6 @@ export default function SmartBinTable() {
                 <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                   theme === "dark" ? "text-gray-300" : "text-gray-500"
                 }`}>
-                  Fill Level
-                </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                  theme === "dark" ? "text-gray-300" : "text-gray-500"
-                }`}>
-                  Temperature
-                </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                  theme === "dark" ? "text-gray-300" : "text-gray-500"
-                }`}>
-                  Humidity
-                </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                  theme === "dark" ? "text-gray-300" : "text-gray-500"
-                }`}>
                 </th>
               </tr>
             </thead>
@@ -205,7 +313,7 @@ export default function SmartBinTable() {
             }`}>
               {currentRows.map((bin) => (
                 <tr
-                  key={bin.smartBinId}
+                  key={bin.id}
                   className={`${
                     theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-50"
                   } transition-colors duration-200`}
@@ -213,7 +321,7 @@ export default function SmartBinTable() {
                   <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${
                     theme === "dark" ? "text-gray-100" : "text-gray-900"
                   }`}>
-                    {bin.smartBinId}
+                    {bin.id}
                   </td>
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"
@@ -243,29 +351,8 @@ export default function SmartBinTable() {
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"
                   }`}>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-blue-500 h-2 rounded-full"
-                        style={{ width: bin.fillLevel }}
-                      ></div>
-                    </div>
-                    <span className="text-xs text-gray-500">{bin.fillLevel}</span>
-                  </td>
-                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-500"
-                  }`}>
-                    {bin.temperature}
-                  </td>
-                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-500"
-                  }`}>
-                    {bin.humidity}
-                  </td>
-                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-500"
-                  }`}>
                     <button
-                      onClick={() => handleDelete(bin.smartBinId)}
+                      onClick={() => handleDelete(bin.id)}
                       className={`p-2 rounded-full ${
                         theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-200"
                       }`}
