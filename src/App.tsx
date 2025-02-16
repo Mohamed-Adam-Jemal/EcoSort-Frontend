@@ -1,4 +1,4 @@
-import { Route, BrowserRouter as Router, Routes } from "react-router";
+import { Route, BrowserRouter as Router, Routes, Navigate } from "react-router-dom"; // Import Navigate
 import AppLayout from "./layout/AppLayout";
 import AuthLayout from "./layout/AuthLayout";
 import SignIn from "./pages/AuthPages/SignIn";
@@ -8,49 +8,34 @@ import Calendar from "./pages/Calendar";
 import Ecommerce from "./pages/Dashboard/ECommerce";
 import FormElements from "./pages/Forms/FormElements";
 import NotFound from "./pages/OtherPage/NotFound";
-import BasicTables from "./pages/Tables/BasicTables";
-import Alerts from "./pages/UiElements/Alerts";
-import Avatars from "./pages/UiElements/Avatars";
-import Badges from "./pages/UiElements/Badges";
-import Buttons from "./pages/UiElements/Buttons";
-import Images from "./pages/UiElements/Images";
-import Videos from "./pages/UiElements/Videos";
 import UserProfiles from "./pages/UserProfiles";
 import WasteTable from "./pages/Forms/WasteTable";
 import UserTable from "./pages/Forms/UserTable";
 import SmartBinTable from "./pages/Forms/SmartBinTable";
 import WasteBotTable from "./pages/Forms/WasteBotTable";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
   return (
     <>
       <Router>
         <Routes>
+          {/* Redirect root path to /signin */}
+          <Route path="/" element={<Navigate to="/signin" />} />
+
           {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
-            <Route index path="/" element={<Ecommerce />} />
-            {/* Others Page */}
-            <Route path="/profile" element={<UserProfiles />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/blank" element={<Blank />} />
-
-            {/* Forms */}
-            <Route path="/form-elements" element={<FormElements />} />
-            <Route path="/waste-table" element={<WasteTable />} />
-            <Route path="/user-table" element={<UserTable />} />
-            <Route path="/smartbin-table" element={<SmartBinTable />} />
-            <Route path="/wastebot-table" element={<WasteBotTable />} />
-
-            {/* Tables */}
-            <Route path="/basic-tables" element={<BasicTables />} />
-
-            {/* Ui Elements */}
-            <Route path="/alerts" element={<Alerts />} />
-            <Route path="/avatars" element={<Avatars />} />
-            <Route path="/badges" element={<Badges />} />
-            <Route path="/buttons" element={<Buttons />} />
-            <Route path="/images" element={<Images />} />
-            <Route path="/videos" element={<Videos />} />
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AppLayout />}>
+              <Route path="/dashboard" element={<Ecommerce />} />
+              <Route path="/profile" element={<UserProfiles />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/blank" element={<Blank />} />
+              <Route path="/form-elements" element={<FormElements />} />
+              <Route path="/waste-table" element={<WasteTable />} />
+              <Route path="/user-table" element={<UserTable />} />
+              <Route path="/smartbin-table" element={<SmartBinTable />} />
+              <Route path="/wastebot-table" element={<WasteBotTable />} />
+            </Route>
           </Route>
 
           {/* Auth Layout */}

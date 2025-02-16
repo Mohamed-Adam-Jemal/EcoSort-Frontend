@@ -13,7 +13,8 @@ export default function UserTable() {
   const [error, setError] = useState(null); // State to handle errors
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const [formData, setFormData] = useState({
-    username: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
     role: "",
@@ -93,7 +94,8 @@ export default function UserTable() {
       
       // Reset the form data
       setFormData({
-        username: "",
+        first_name: "",
+        last_name: "",
         email: "",
         password: "",
         role: "",
@@ -159,17 +161,35 @@ export default function UserTable() {
         Add User
       </h2>
       <form onSubmit={handleSubmit}>
-        {/* Username Field */}
+        {/* First Name Field */}
         <div className="mb-3">
           <label className={`block text-xs font-medium ${
             theme === "dark" ? "text-gray-300" : "text-gray-700"
           }`}>
-            Username
+            First Name
           </label>
           <input
             type="text"
-            name="username"
-            value={formData.username}
+            name="first_name"
+            value={formData.first_name}
+            onChange={handleInputChange}
+            className={`mt-1 block w-full rounded-md border ${
+              theme === "dark" ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"
+            } p-1 text-sm`}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className={`block text-xs font-medium ${
+            theme === "dark" ? "text-gray-300" : "text-gray-700"
+          }`}>
+            Last Name
+          </label>
+          <input
+            type="text"
+            name="last_name"
+            value={formData.last_name}
             onChange={handleInputChange}
             className={`mt-1 block w-full rounded-md border ${
               theme === "dark" ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"
@@ -341,7 +361,12 @@ export default function UserTable() {
                 <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                   theme === "dark" ? "text-gray-300" : "text-gray-500"
                 }`}>
-                  Username
+                  First Name
+                </th>
+                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-500"
+                }`}>
+                  Last Name
                 </th>
                 <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                   theme === "dark" ? "text-gray-300" : "text-gray-500"
@@ -387,7 +412,12 @@ export default function UserTable() {
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"
                   }`}>
-                    {user.username}
+                    {user.first_name}
+                  </td>
+                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-500"
+                  }`}>
+                    {user.last_name}
                   </td>
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"
