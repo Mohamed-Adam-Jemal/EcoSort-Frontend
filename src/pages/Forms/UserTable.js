@@ -171,7 +171,7 @@ export default function UserTable() {
               Add User
             </h2>
             <form onSubmit={handleSubmit}>
-              {/* Form fields */}
+              {/* First Name Field */}
               <div className="mb-3">
                 <label className={`block text-xs font-medium ${
                   theme === "dark" ? "text-gray-300" : "text-gray-700"
@@ -208,9 +208,96 @@ export default function UserTable() {
                 />
               </div>
 
-              {/* Other form fields (email, password, role, etc.) */}
-              {/* ... */}
+              {/* Email Field */}
+              <div className="mb-3">
+                <label className={`block text-xs font-medium ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-700"
+                }`}>
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className={`mt-1 block w-full rounded-md border ${
+                    theme === "dark" ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"
+                  } p-1 text-sm`}
+                  required
+                />
+              </div>
 
+              {/* Password Field */}
+              <div className="mb-3">
+                <label className={`block text-xs font-medium ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-700"
+                }`}>
+                  Password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className={`mt-1 block w-full rounded-md border ${
+                    theme === "dark" ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"
+                  } p-1 text-sm`}
+                  required
+                />
+              </div>
+
+              {/* Role Field as a Select Dropdown */}
+              <div className="mb-3">
+                <label className={`block text-xs font-medium ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-700"
+                }`}>
+                  Role
+                </label>
+                <select
+                  name="role"
+                  value={formData.role}
+                  onChange={handleInputChange}
+                  className={`mt-1 block w-full rounded-md border ${
+                    theme === "dark" ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"
+                  } p-1 text-sm`}
+                  required
+                >
+                  <option value="" disabled>Select a role</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Agent">Agent</option>
+                  <option value="User">User</option>
+                </select>
+              </div>
+
+              {/* Date and Time Joined Field */}
+              <div className="mb-3">
+                <label className={`block text-xs font-medium ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-700"
+                }`}>
+                  Date and Time Joined
+                </label>
+                <div className="relative">
+                  <input
+                    type="datetime-local"
+                    name="date_joined"
+                    value={formData.date_joined}
+                    onChange={handleInputChange}
+                    className={`mt-1 block w-full rounded-md border ${
+                      theme === "dark" ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"
+                    } p-1 text-sm`}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => document.querySelector('input[name="date_joined"]').showPicker()}
+                    className={`absolute inset-y-0 right-0 px-3 py-1 ${
+                      theme === "dark" ? "bg-gray-600 hover:bg-gray-500" : "bg-gray-200 hover:bg-gray-300"
+                    } rounded-r-md`}
+                  >
+                    📅
+                  </button>
+                </div>
+              </div>
               {/* Form Buttons */}
               <div className="flex justify-end" style={{ marginTop: '1rem' }}>
                 <button

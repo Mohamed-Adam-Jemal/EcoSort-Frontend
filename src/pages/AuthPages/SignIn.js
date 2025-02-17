@@ -25,17 +25,25 @@ export default function SignIn() {
         email,
         password,
       });
-      
-      // Save user data to localStorage
-      localStorage.setItem("user", JSON.stringify(response.data));
 
-      // Redirect to dashboard
-      navigate("/dashboard");
+      if (response.status === 200) {
+        // Save JWT tokens to localStorage
+        localStorage.setItem("access_token", response.data.access_token);
+        localStorage.setItem("refresh_token", response.data.refresh_token);
+
+        // Redirect to the dashboard
+        navigate("/dashboard");
+      }
     } catch (error) {
-      alert("Invalid credentials. Please try again.");
+      if (error.response && error.response.data) {
+        alert(error.response.data.error || "Invalid credentials. Please try again.");
+      } else {
+        alert("An error occurred. Please try again.");
+      }
       console.error("Login error:", error);
     }
   };
+
 
   return (
     <>
@@ -129,7 +137,7 @@ export default function SignIn() {
               <img src="./images/logo/auth-logo.svg" alt="Logo" />
             </Link>
             <p className="text-center text-gray-400 dark:text-white/60">
-              Free and Open-Source Tailwind CSS Admin Dashboard Template
+              Powerful and optimized waste management system
             </p>
           </div>
         </div>
