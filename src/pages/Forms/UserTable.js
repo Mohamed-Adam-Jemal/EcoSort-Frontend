@@ -263,40 +263,9 @@ export default function UserTable() {
                   required
                 >
                   <option value="" disabled>Select a role</option>
-                  <option value="Admin">Admin</option>
                   <option value="Agent">Agent</option>
                   <option value="User">User</option>
                 </select>
-              </div>
-
-              {/* Date and Time Joined Field */}
-              <div className="mb-3">
-                <label className={`block text-xs font-medium ${
-                  theme === "dark" ? "text-gray-300" : "text-gray-700"
-                }`}>
-                  Date and Time Joined
-                </label>
-                <div className="relative">
-                  <input
-                    type="datetime-local"
-                    name="date_joined"
-                    value={formData.date_joined}
-                    onChange={handleInputChange}
-                    className={`mt-1 block w-full rounded-md border ${
-                      theme === "dark" ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"
-                    } p-1 text-sm`}
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => document.querySelector('input[name="date_joined"]').showPicker()}
-                    className={`absolute inset-y-0 right-0 px-3 py-1 ${
-                      theme === "dark" ? "bg-gray-600 hover:bg-gray-500" : "bg-gray-200 hover:bg-gray-300"
-                    } rounded-r-md`}
-                  >
-                    📅
-                  </button>
-                </div>
               </div>
               {/* Form Buttons */}
               <div className="flex justify-end" style={{ marginTop: '1rem' }}>
@@ -446,7 +415,7 @@ export default function UserTable() {
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"
                   }`}>
-                    {user.password}
+                    {user.password.slice(20,30)}
                   </td>
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"

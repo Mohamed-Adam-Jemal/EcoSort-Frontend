@@ -147,7 +147,6 @@ export default function SignUp() {
                       <option value="" disabled>
                         Select a role
                       </option>
-                      <option value="Admin">Admin</option>
                       <option value="Agent">Agent</option>
                       <option value="User">User</option>
                     </select>
