@@ -27,10 +27,6 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
               <Route path="/dashboard" element={<Ecommerce />} />
-              <Route path="/profile" element={<UserProfiles />} />
-              <Route path="/calendar" element={<Calendar />} />
-              <Route path="/blank" element={<Blank />} />
-              <Route path="/form-elements" element={<FormElements />} />
               <Route path="/waste-table" element={<WasteTable />} />
               <Route path="/user-table" element={<UserTable />} />
               <Route path="/smartbin-table" element={<SmartBinTable />} />

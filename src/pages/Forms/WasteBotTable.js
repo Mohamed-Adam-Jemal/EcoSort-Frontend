@@ -288,7 +288,7 @@ export default function WasteBotTable() {
               Overview of WasteBot status and assignments.
             </p>
           </div>
-          <div>
+          <div className="flex items-center space-x-4">
             {/* Search Input */}
             <input
               type="text"
@@ -305,7 +305,7 @@ export default function WasteBotTable() {
                 theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-200"
               }`}
             >
-              <FaPlus className="text-green-500" /> {/* Plus Icon */}
+              <FaPlus className="text-green-500" /> {/* Add Icon */}
             </button>
           </div>
         </div>
