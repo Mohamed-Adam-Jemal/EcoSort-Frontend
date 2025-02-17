@@ -23,6 +23,9 @@ export default function SmartBinTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(5); // Number of rows per page
 
+  // Search state
+  const [searchQuery, setSearchQuery] = useState("");
+
   // Use the theme context
   const { theme } = useTheme();
 
@@ -42,16 +45,21 @@ export default function SmartBinTable() {
     fetchData();
   }, []); // Empty dependency array ensures this runs only once on mount
 
+  // Filter SmartBins based on search query
+  const filteredSmartBins = smartBinData.filter((bin) =>
+    bin.location.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   // Calculate paginated data
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = smartBinData.slice(indexOfFirstRow, indexOfLastRow);
+  const currentRows = filteredSmartBins.slice(indexOfFirstRow, indexOfLastRow);
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   // Calculate total number of pages
-  const totalPages = Math.ceil(smartBinData.length / rowsPerPage);
+  const totalPages = Math.ceil(filteredSmartBins.length / rowsPerPage);
 
   // Handle SmartBin deletion
   const handleDelete = async (smartBinId) => {
@@ -269,7 +277,7 @@ export default function SmartBinTable() {
       <div className={`rounded-lg shadow-md overflow-hidden ${
         theme === "dark" ? "bg-gray-800" : "bg-white"
       }`}>
-        {/* Header with Add Button */}
+        {/* Header with Add Button and Search Field */}
         <div className={`flex items-center justify-between p-6 border-b ${
           theme === "dark" ? "border-gray-700" : "border-gray-200"
         }`}>
@@ -285,7 +293,17 @@ export default function SmartBinTable() {
               Overview of SmartBin statuses and metrics.
             </p>
           </div>
-          <div>
+          <div className="flex items-center space-x-4">
+            {/* Search Input */}
+            <input
+              type="text"
+              placeholder="Search by location..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={`p-2 rounded-md border ${
+                theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-100" : "bg-white border-gray-300 text-gray-700"
+              }`}
+            />
             <button
               onClick={handleAddSmartBin}
               className={`p-2 rounded-full ${
@@ -307,7 +325,7 @@ export default function SmartBinTable() {
                 <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                   theme === "dark" ? "text-gray-300" : "text-gray-500"
                 }`}>
-                  SmartBin ID
+                  ID
                 </th>
                 <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                   theme === "dark" ? "text-gray-300" : "text-gray-500"
@@ -317,7 +335,7 @@ export default function SmartBinTable() {
                 <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                   theme === "dark" ? "text-gray-300" : "text-gray-500"
                 }`}>
-                  Cover Status
+                  Cover
                 </th>
                 <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                   theme === "dark" ? "text-gray-300" : "text-gray-500"

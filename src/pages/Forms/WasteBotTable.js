@@ -22,6 +22,10 @@ export default function WasteBotTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(5); // Number of rows per page
 
+
+  // Search state
+  const [searchQuery, setSearchQuery] = useState("");
+
   // Use the theme context
   const { theme } = useTheme();
 
@@ -41,10 +45,17 @@ export default function WasteBotTable() {
     fetchData();
   }, []); // Empty dependency array ensures this runs only once on mount
 
+
+   // Filter WasteBots based on search query
+   const filteredWasteBots = wasteBotData.filter((wastebot) =>
+    wastebot.location.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+
   // Calculate paginated data
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = wasteBotData.slice(indexOfFirstRow, indexOfLastRow);
+  const currentRows = filteredWasteBots.slice(indexOfFirstRow, indexOfLastRow);
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -278,6 +289,16 @@ export default function WasteBotTable() {
             </p>
           </div>
           <div>
+            {/* Search Input */}
+            <input
+              type="text"
+              placeholder="Search by location..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={`p-2 rounded-md border ${
+                theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-100" : "bg-white border-gray-300 text-gray-700"
+              }`}
+            />
             <button
               onClick={handleAddWasteBot}
               className={`p-2 rounded-full ${
