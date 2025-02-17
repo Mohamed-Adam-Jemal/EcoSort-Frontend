@@ -1,85 +1,62 @@
 import React, { useEffect, useCallback, useRef, useState } from "react";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation } from "react-router-dom";
 
 // Assume these icons are imported from an icon library
 import { useSidebar } from "../context/SidebarContext";
 import {
-  BoxCubeIcon,
-  CalenderIcon,
-  ChevronDownIcon,
   GridIcon,
+  ChevronDownIcon,
   HorizontaLDots,
-  ListIcon,
-  PageIcon,
-  PieChartIcon,
-  PlugInIcon,
-  TableIcon,
   UserCircleIcon,
+  TaskIcon,
   TrashBinIcon,
   BoltIcon,
-  BoxIcon,
-  DocsIcon, 
-  ErrorIcon,
-  InfoIcon, 
-  TaskIcon
+  WasteBotIcon,
+  WasteIcon,
+  SmartBinIcon,
+  ProfileIcon,
+  DashboardIcon,
 } from "../icons";
 
-type NavItem = {
-  name: string;
-  icon: React.ReactNode;
-  path?: string;
-  subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
-};
-
-const navItems: NavItem[] = [
+const navItems = [
   {
-    icon: <GridIcon />,
+    icon: <DashboardIcon />,
     name: "Home",
     path: "/dashboard",
   },
-
   {
     name: "Users",
-    icon: <UserCircleIcon />,
+    icon: <ProfileIcon />,
     path: "/user-table",
   },
-
   {
     name: "Waste",
-    icon: <TaskIcon />,
+    icon: <WasteIcon />,
     path: "/waste-table",
-  },  
-  
-  {
-    name: "SmartBin",
-    icon: <TrashBinIcon />,
-    path: "/smartbin-table",
   },
-
   {
     name: "WasteBot",
-    icon: <BoltIcon />,
+    icon: <WasteBotIcon />,
     path: "/wastebot-table",
   },
+  {
+    name: "SmartBin",
+    icon: <SmartBinIcon />,
+    path: "/smartbin-table",
+  },
+  
 ];
 
-
-
-const AppSidebar: React.FC = () => {
+const AppSidebar = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
 
-  const [openSubmenu, setOpenSubmenu] = useState<{
-    type: "main";
-    index: number;
-  } | null>(null);
-  const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(
-    {}
-  );
-  const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [openSubmenu, setOpenSubmenu] = useState(null);
+  const [subMenuHeight, setSubMenuHeight] = useState({});
+  const subMenuRefs = useRef({});
 
   const isActive = useCallback(
-    (path: string) => location.pathname === path,
+    (path) => location.pathname === path,
     [location.pathname]
   );
 
@@ -95,7 +72,7 @@ const AppSidebar: React.FC = () => {
     }
   }, [openSubmenu]);
 
-  const handleSubmenuToggle = (index: number, menuType: "main") => {
+  const handleSubmenuToggle = (index, menuType) => {
     setOpenSubmenu((prevOpenSubmenu) => {
       if (
         prevOpenSubmenu &&
@@ -108,7 +85,7 @@ const AppSidebar: React.FC = () => {
     });
   };
 
-  const renderMenuItems = (items: NavItem[], menuType: "main") => (
+  const renderMenuItems = (items, menuType) => (
     <ul className="flex flex-col gap-4">
       {items.map((nav, index) => (
         <li key={nav.name}>

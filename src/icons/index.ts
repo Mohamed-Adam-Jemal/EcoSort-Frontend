@@ -50,6 +50,11 @@ import { ReactComponent as MailIcon } from "./mail-line.svg";
 import { ReactComponent as HorizontaLDots } from "./horizontal-dots.svg";
 import { ReactComponent as ChatIcon } from "./chat.svg";
 import { ReactComponent as MoreDotIcon } from "./more-dot.svg";
+import { ReactComponent as WasteBotIcon } from "./wastebot-icon.svg";
+import { ReactComponent as SmartBinIcon } from "./smartbin-icon.svg";
+import { ReactComponent as WasteIcon } from "./waste-icon.svg";
+import { ReactComponent as DashboardIcon } from "./dashboard-icon.svg";
+import { ReactComponent as ProfileIcon } from "./user-icon.svg";
 
 export {
   DownloadIcon,
@@ -104,4 +109,9 @@ export {
   ChevronUpIcon,
   ChatIcon,
   MoreDotIcon,
+  WasteIcon,
+  SmartBinIcon,
+  WasteBotIcon,
+  ProfileIcon,
+  DashboardIcon,
 };

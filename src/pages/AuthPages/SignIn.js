@@ -76,7 +76,7 @@ export default function SignIn() {
                         Email <span className="text-error-500">*</span>{" "}
                       </Label>
                       <Input
-                        placeholder="info@gmail.com"
+                        placeholder="info@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
