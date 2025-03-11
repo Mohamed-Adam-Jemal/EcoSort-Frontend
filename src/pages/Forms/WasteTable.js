@@ -1,24 +1,13 @@
-"use client";
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios"; // Import axios for making HTTP requests
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { useTheme } from "../../context/ThemeContext"; // Import the useTheme hook
 
 export default function WasteTable() {
-  // Sample waste data (replace with data from your backend)
-  const wasteData = [
-    { wasteId: 1, type: "Plastic", timeOfPicking: "2023-10-01 10:30 AM", wasteBinId: "BIN-001", wasteBotId: "BOT-001" },
-    { wasteId: 2, type: "Paper", timeOfPicking: "2023-10-01 11:15 AM", wasteBinId: "BIN-002", wasteBotId: "BOT-002" },
-    { wasteId: 3, type: "Metal", timeOfPicking: "2023-10-01 12:00 PM", wasteBinId: "BIN-003", wasteBotId: "BOT-001" },
-    { wasteId: 4, type: "Glass", timeOfPicking: "2023-10-01 01:45 PM", wasteBinId: "BIN-001", wasteBotId: "BOT-003" },
-    { wasteId: 5, type: "Plastic", timeOfPicking: "2023-10-02 09:00 AM", wasteBinId: "BIN-002", wasteBotId: "BOT-002" },
-    { wasteId: 6, type: "Paper", timeOfPicking: "2023-10-02 10:30 AM", wasteBinId: "BIN-003", wasteBotId: "BOT-001" },
-    { wasteId: 7, type: "Metal", timeOfPicking: "2023-10-02 12:00 PM", wasteBinId: "BIN-001", wasteBotId: "BOT-003" },
-    { wasteId: 8, type: "Glass", timeOfPicking: "2023-10-02 02:00 PM", wasteBinId: "BIN-002", wasteBotId: "BOT-002" },
-    { wasteId: 9, type: "Plastic", timeOfPicking: "2023-10-03 08:00 AM", wasteBinId: "BIN-003", wasteBotId: "BOT-001" },
-    { wasteId: 10, type: "Paper", timeOfPicking: "2023-10-03 11:00 AM", wasteBinId: "BIN-001", wasteBotId: "BOT-003" },
-  ];
+  const [wasteData, setWasteData] = useState([]); // State to store waste data
+  const [loading, setLoading] = useState(true); // State to handle loading
+  const [error, setError] = useState(null); // State to handle errors
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,13 +19,32 @@ export default function WasteTable() {
   const currentRows = wasteData.slice(indexOfFirstRow, indexOfLastRow);
 
   // Change page
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   // Calculate total number of pages
   const totalPages = Math.ceil(wasteData.length / rowsPerPage);
 
   // Use the theme context
   const { theme } = useTheme();
+
+  // Fetch waste data from the backend
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/users/");
+        setWasteData(response.data); // Set the fetched data
+        setLoading(false); // Set loading to false
+      } catch (error) {
+        setError(error.message); // Set error message
+        setLoading(false); // Set loading to false
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array ensures this runs only once on mount
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className={`p-6 ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"} min-h-screen`}>
@@ -110,7 +118,7 @@ export default function WasteTable() {
                   <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${
                     theme === "dark" ? "text-gray-100" : "text-gray-900"
                   }`}>
-                    {waste.wasteId}
+                    {waste.id}
                   </td>
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"
@@ -121,28 +129,28 @@ export default function WasteTable() {
                           ? "bg-blue-100 text-blue-800"
                           : waste.type === "Paper"
                           ? "bg-green-100 text-green-800"
-                          : waste.type === "Metal"
+                          : waste.type === "metal"
                           ? "bg-yellow-100 text-yellow-800"
                           : "bg-purple-100 text-purple-800"
                       }`}
                     >
-                      {waste.type}
+                      {waste.waste_type}
                     </span>
                   </td>
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"
                   }`}>
-                    {waste.timeOfPicking}
+                    {waste.time_collected}
                   </td>
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"
                   }`}>
-                    {waste.wasteBinId}
+                    {waste.smartbin}
                   </td>
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"
                   }`}>
-                    {waste.wasteBotId}
+                    {waste.wastebot}
                   </td>
                 </tr>
               ))}
