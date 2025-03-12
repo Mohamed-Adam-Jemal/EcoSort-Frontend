@@ -8,21 +8,11 @@ export default function WasteTable() {
   const [wasteData, setWasteData] = useState([]); // State to store waste data
   const [loading, setLoading] = useState(true); // State to handle loading
   const [error, setError] = useState(null); // State to handle errors
+  const [searchQuery, setSearchQuery] = useState(""); // State for search functionality
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(5); // Number of rows per page
-
-  // Calculate paginated data
-  const indexOfLastRow = currentPage * rowsPerPage;
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = wasteData.slice(indexOfFirstRow, indexOfLastRow);
-
-  // Change page
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  // Calculate total number of pages
-  const totalPages = Math.ceil(wasteData.length / rowsPerPage);
 
   // Use the theme context
   const { theme } = useTheme();
@@ -31,7 +21,7 @@ export default function WasteTable() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/users/");
+        const response = await axios.get("http://127.0.0.1:8000/waste/");
         setWasteData(response.data); // Set the fetched data
         setLoading(false); // Set loading to false
       } catch (error) {
@@ -42,6 +32,22 @@ export default function WasteTable() {
 
     fetchData();
   }, []); // Empty dependency array ensures this runs only once on mount
+
+  // Filter waste data based on search query
+const filteredWasteData = wasteData.filter((waste) =>
+  waste.waste_type && waste.waste_type.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
+  // Calculate paginated data
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredWasteData.slice(indexOfFirstRow, indexOfLastRow);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Calculate total number of pages
+  const totalPages = Math.ceil(filteredWasteData.length / rowsPerPage);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -57,21 +63,37 @@ export default function WasteTable() {
       <div className={`rounded-lg shadow-md overflow-hidden ${
         theme === "dark" ? "bg-gray-800" : "bg-white"
       }`}>
-        <div className={`p-6 border-b ${
+        {/* Header with Search Input */}
+        <div className={`flex items-center justify-between p-6 border-b ${
           theme === "dark" ? "border-gray-700" : "border-gray-200"
         }`}>
-          <h2 className={`text-xl font-semibold ${
-            theme === "dark" ? "text-gray-100" : "text-gray-800"
-          }`}>
-            Collected Waste Data
-          </h2>
-          <p className={`text-sm ${
-            theme === "dark" ? "text-gray-400" : "text-gray-500"
-          }`}>
-            Overview of waste collected by WasteBots.
-          </p>
+          <div>
+            <h2 className={`text-xl font-semibold ${
+              theme === "dark" ? "text-gray-100" : "text-gray-800"
+            }`}>
+              Collected Waste Data
+            </h2>
+            <p className={`text-sm ${
+              theme === "dark" ? "text-gray-400" : "text-gray-500"
+            }`}>
+              Overview of waste collected by WasteBots.
+            </p>
+          </div>
+          <div>
+            {/* Search Input */}
+            <input
+              type="text"
+              placeholder="Search by waste type..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={`p-2 rounded-md border ${
+                theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-100" : "bg-white border-gray-300 text-gray-700"
+              }`}
+            />
+          </div>
         </div>
 
+        {/* Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className={`${
@@ -110,7 +132,7 @@ export default function WasteTable() {
             }`}>
               {currentRows.map((waste) => (
                 <tr
-                  key={waste.wasteId}
+                  key={waste.id}
                   className={`${
                     theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-50"
                   } transition-colors duration-200`}
@@ -125,16 +147,16 @@ export default function WasteTable() {
                   }`}>
                     <span
                       className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        waste.type === "Plastic"
+                        waste.waste_type === "plastic"
                           ? "bg-blue-100 text-blue-800"
-                          : waste.type === "Paper"
+                          : waste.waste_type === "paper"
                           ? "bg-green-100 text-green-800"
-                          : waste.type === "metal"
+                          : waste.waste_type === "metal"
                           ? "bg-yellow-100 text-yellow-800"
                           : "bg-purple-100 text-purple-800"
                       }`}
                     >
-                      {waste.waste_type}
+                      {waste.waste_type.toUpperCase()}
                     </span>
                   </td>
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
@@ -165,8 +187,8 @@ export default function WasteTable() {
           <div className={`text-sm ${
             theme === "dark" ? "text-gray-400" : "text-gray-500"
           }`}>
-            Showing {indexOfFirstRow + 1} to {Math.min(indexOfLastRow, wasteData.length)} of{" "}
-            {wasteData.length} entries
+            Showing {indexOfFirstRow + 1} to {Math.min(indexOfLastRow, filteredWasteData.length)} of{" "}
+            {filteredWasteData.length} entries
           </div>
           <div className="flex space-x-2">
             <button
