@@ -1,7 +1,5 @@
 import React, { useEffect, useCallback, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-
-// Assume these icons are imported from an icon library
 import { useSidebar } from "../context/SidebarContext";
 import {
   GridIcon,
@@ -28,28 +26,32 @@ const navItems = [
     name: "Users",
     icon: <ProfileIcon />,
     path: "/user-table",
+    roles: ["Admin"], // Only admin can see this item
   },
   {
     name: "Waste",
     icon: <WasteIcon />,
     path: "/waste-table",
+    roles: ["Admin", "Agent"], // Admin and agents can see this
   },
   {
     name: "WasteBot",
     icon: <WasteBotIcon />,
     path: "/wastebot-table",
+    roles: ["Admin", "Agent"], // Admin and agents can see this
   },
   {
     name: "SmartBin",
     icon: <SmartBinIcon />,
     path: "/smartbin-table",
+    roles: ["Admin", "Agent", "User"], // Everyone can see this
   },
-  
 ];
 
 const AppSidebar = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
+  const userRole = localStorage.getItem("role"); // Fetch user role from localStorage
 
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [subMenuHeight, setSubMenuHeight] = useState({});
@@ -84,6 +86,11 @@ const AppSidebar = () => {
       return { type: menuType, index };
     });
   };
+
+  // Filter menu items based on user role
+  const filteredNavItems = navItems.filter(
+    (item) => !item.roles || item.roles.includes(userRole)
+  );
 
   const renderMenuItems = (items, menuType) => (
     <ul className="flex flex-col gap-4">
@@ -147,61 +154,6 @@ const AppSidebar = () => {
                 )}
               </Link>
             )
-          )}
-          {nav.subItems && (isExpanded || isHovered || isMobileOpen) && (
-            <div
-              ref={(el) => {
-                subMenuRefs.current[`${menuType}-${index}`] = el;
-              }}
-              className="overflow-hidden transition-all duration-300"
-              style={{
-                height:
-                  openSubmenu?.type === menuType && openSubmenu?.index === index
-                    ? `${subMenuHeight[`${menuType}-${index}`]}px`
-                    : "0px",
-              }}
-            >
-              <ul className="mt-2 space-y-1 ml-9">
-                {nav.subItems.map((subItem) => (
-                  <li key={subItem.name}>
-                    <Link
-                      to={subItem.path}
-                      className={`menu-dropdown-item ${
-                        isActive(subItem.path)
-                          ? "menu-dropdown-item-active"
-                          : "menu-dropdown-item-inactive"
-                      }`}
-                    >
-                      {subItem.name}
-                      <span className="flex items-center gap-1 ml-auto">
-                        {subItem.new && (
-                          <span
-                            className={`ml-auto ${
-                              isActive(subItem.path)
-                                ? "menu-dropdown-badge-active"
-                                : "menu-dropdown-badge-inactive"
-                            } menu-dropdown-badge`}
-                          >
-                            new
-                          </span>
-                        )}
-                        {subItem.pro && (
-                          <span
-                            className={`ml-auto ${
-                              isActive(subItem.path)
-                                ? "menu-dropdown-badge-active"
-                                : "menu-dropdown-badge-inactive"
-                            } menu-dropdown-badge`}
-                          >
-                            pro
-                          </span>
-                        )}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
           )}
         </li>
       ))}
@@ -273,18 +225,7 @@ const AppSidebar = () => {
                   <HorizontaLDots />
                 )}
               </h2>
-              {renderMenuItems(navItems, "main")}
-            </div>
-
-            <div className="">
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
-                  !isExpanded && !isHovered
-                    ? "lg:justify-center"
-                    : "justify-start"
-                }`}
-              >
-              </h2>
+              {renderMenuItems(filteredNavItems, "main")}
             </div>
           </div>
         </nav>
