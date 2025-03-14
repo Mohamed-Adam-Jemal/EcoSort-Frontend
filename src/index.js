@@ -10,18 +10,24 @@ import App from "./App";
 import { ThemeProvider } from "./context/ThemeContext";
 import { AppWrapper } from "./components/common/PageMeta";
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
-root.render(
-  <React.StrictMode>
-    <AppWrapper>
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>
-    </AppWrapper>
-  </React.StrictMode>
-);
+
+const container = document.getElementById("root");
+
+// Ensure the container exists before rendering
+if (container) {
+  const root = ReactDOM.createRoot(container);
+  root.render(
+    <React.StrictMode>
+      <AppWrapper>
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
+      </AppWrapper>
+    </React.StrictMode>
+  );
+} else {
+  console.error("Root element with ID 'root' not found.");
+}
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

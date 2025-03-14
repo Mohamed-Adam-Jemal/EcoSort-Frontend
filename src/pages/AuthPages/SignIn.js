@@ -5,14 +5,13 @@ import GridShape from "../../components/common/GridShape";
 import Input from "../../components/form/input/InputField";
 import Label from "../../components/form/Label";
 import { Link } from "react-router-dom";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
-import Checkbox from "../../components/form/input/Checkbox";
+import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Button from "../../components/ui/button/Button";
 import PageMeta from "../../components/common/PageMeta";
+import { jwtDecode } from "jwt-decode";
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -30,6 +29,15 @@ export default function SignIn() {
         // Save JWT tokens to localStorage
         localStorage.setItem("access_token", response.data.access_token);
         localStorage.setItem("refresh_token", response.data.refresh_token);
+
+        const decodedToken = jwtDecode(response.data.access_token);
+        console.log("Decoded Payload:", decodedToken);
+
+        // Store the extracted data in localStorage
+        localStorage.setItem('firstName', decodedToken.first_name);
+        localStorage.setItem('lastName', decodedToken.last_name);
+        localStorage.setItem('email', decodedToken.email);
+        localStorage.setItem('role', decodedToken.role);
 
         // Redirect to the dashboard
         navigate("/dashboard");

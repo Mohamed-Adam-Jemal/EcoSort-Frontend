@@ -29,16 +29,8 @@ export default function WasteTable() {
         setLoading(false); // Set loading to false
       }
     };
-
-    // Fetch data every 1 second
-    const intervalId = setInterval(() => {
-      fetchData();
-    }, 1000);
-
-    // Cleanup function to clear the interval when the component unmounts
-    return () => clearInterval(intervalId);
-  }, []); // Empty dependency array ensures this runs only once on mount
-
+    fetchData();
+  }, []); 
 
   // Filter waste data based on search query
 const filteredWasteData = wasteData.filter((waste) =>
