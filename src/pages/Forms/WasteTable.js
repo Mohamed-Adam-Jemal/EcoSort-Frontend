@@ -21,7 +21,7 @@ export default function WasteTable() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/waste/");
+        const response = await axios.get("http://127.0.0.1:8000/wastes/");
         setWasteData(response.data); // Set the fetched data
         setLoading(false); // Set loading to false
       } catch (error) {
@@ -30,8 +30,15 @@ export default function WasteTable() {
       }
     };
 
-    fetchData();
+    // Fetch data every 1 second
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 1000);
+
+    // Cleanup function to clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
   }, []); // Empty dependency array ensures this runs only once on mount
+
 
   // Filter waste data based on search query
 const filteredWasteData = wasteData.filter((waste) =>
