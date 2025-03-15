@@ -19,6 +19,8 @@ export default function SmartBinTable() {
     capacity: 0,
   }); // State to store form data
 
+  const userRole = localStorage.getItem("role");
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(5); // Number of rows per page
@@ -304,14 +306,18 @@ export default function SmartBinTable() {
                 theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-100" : "bg-white border-gray-300 text-gray-700"
               }`}
             />
-            <button
-              onClick={handleAddSmartBin}
-              className={`p-2 rounded-full ${
-                theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-200"
-              }`}
-            >
-              <FaPlus className="text-green-500" /> {/* Add Icon */}
-            </button>
+            {
+            (userRole === "admin") && ( // Check if the user's role is admin or agent
+              <button
+                onClick={handleAddSmartBin}
+                className={`p-2 rounded-full ${
+                  theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-200"
+                }`}
+              >
+                <FaPlus className="text-green-500" /> {/* Add Icon */}
+              </button>
+            )
+          }
           </div>
         </div>
 
@@ -404,18 +410,24 @@ export default function SmartBinTable() {
                   }`}>
                     {bin.capacity} L
                   </td>
-                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-500"
-                  }`}>
-                    <button
-                      onClick={() => handleDelete(bin.id)}
-                      className={`p-2 rounded-full ${
-                        theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-200"
-                      }`}
-                    >
-                      <FaTrash className="text-red-500" /> {/* Delete Icon */}
-                    </button>
-                  </td>
+                  {
+                    userRole === "Admin" && ( // Check if the user's role is admin
+                      <td
+                        className={`${
+                          theme === "dark" ? "text-gray-300" : "text-gray-500"
+                        }`}
+                      >
+                        <button
+                          onClick={() => handleDelete(bin.id)}
+                          className={`p-2 rounded-full ${
+                            theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-200"
+                          }`}
+                        >
+                          <FaTrash className="text-red-500" /> {/* Delete Icon */}
+                        </button>
+                      </td>
+                    )
+                  }
                 </tr>
               ))}
             </tbody>
