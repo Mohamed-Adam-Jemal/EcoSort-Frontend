@@ -34,7 +34,7 @@ export default function UserTable() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/users/");
+        const response = await axios.get("http://192.168.1.145:8000/users/");
         setUserData(response.data); // Set the fetched data
         setLoading(false); // Set loading to false
       } catch (error) {

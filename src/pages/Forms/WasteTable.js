@@ -21,7 +21,7 @@ export default function WasteTable() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/wastes/");
+        const response = await axios.get("http://192.168.1.145:8000/wastes/");
         setWasteData(response.data); // Set the fetched data
         setLoading(false); // Set loading to false
       } catch (error) {
@@ -30,12 +30,37 @@ export default function WasteTable() {
       }
     };
     fetchData();
-  }, []); 
+  }, []);
+
+  // Set up SSE connection for real-time updates
+  useEffect(() => {
+    const eventSource = new EventSource("http://192.168.1.145:8000/sse/wastes/");
+
+    // Handle incoming messages
+    eventSource.onmessage = (event) => {
+      const newData = JSON.parse(event.data); // Parse the SSE data
+      setWasteData((prevData) => [...prevData, newData]); // Append new data to the existing state
+      setLoading(false); // Set loading to false
+    };
+
+    // Handle errors
+    eventSource.onerror = (error) => {
+      setError("Error connecting to the server. Reconnecting..."); // Set error message
+      setLoading(false); // Set loading to false
+      eventSource.close(); // Close the connection
+      // Optionally, you can implement a reconnection logic here
+    };
+
+    // Cleanup function to close the EventSource connection
+    return () => {
+      eventSource.close();
+    };
+  }, []);
 
   // Filter waste data based on search query
-const filteredWasteData = wasteData.filter((waste) =>
-  waste.waste_type && waste.waste_type.toLowerCase().includes(searchQuery.toLowerCase())
-);
+  const filteredWasteData = wasteData.filter((waste) =>
+    waste.waste_type && waste.waste_type.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Calculate paginated data
   const indexOfLastRow = currentPage * rowsPerPage;
