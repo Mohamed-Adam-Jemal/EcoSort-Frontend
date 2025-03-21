@@ -1,5 +1,6 @@
 "use client";
 
+import config from '../../config';
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import axios for HTTP requests
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
@@ -33,7 +34,7 @@ export default function WasteBotTable() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/wastebots/");
+        const response = await axios.get(`${config.serverIp}/wastebots/`);
         setWasteBotData(response.data); // Set the fetched data
         setLoading(false); // Set loading to false
       } catch (error) {
@@ -66,7 +67,7 @@ export default function WasteBotTable() {
   // Handle delete action
   const handleDelete = async (wasteBotId) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/wastebots/${wasteBotId}/`);
+      await axios.delete(`${config.serverIp}/wastebots/${wasteBotId}/`);
       // Remove the deleted WasteBot from the state
       setWasteBotData(wasteBotData.filter((bot) => bot.id !== wasteBotId));
     } catch (error) {
@@ -78,7 +79,7 @@ export default function WasteBotTable() {
   const handleToggleStatus = async (wasteBotId, currentStatus) => {
     try {
       const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
-      const response = await axios.patch(`http://127.0.0.1:8000/wastebots/${wasteBotId}/`, {
+      const response = await axios.patch(`${config.serverIp}/wastebots/${wasteBotId}/`, {
         status: newStatus,
       });
 
@@ -112,7 +113,7 @@ export default function WasteBotTable() {
     e.preventDefault();
     try {
       // Send POST request to add a new WasteBot
-      const response = await axios.post("http://127.0.0.1:8000/wastebots/", formData);
+      const response = await axios.post(`${config.serverIp}/wastebots/`, formData);
 
       // Add the new WasteBot to the state
       setWasteBotData([...wasteBotData, response.data]);

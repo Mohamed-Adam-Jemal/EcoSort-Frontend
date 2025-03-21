@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+
+import config from '../../config';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import GridShape from "../../components/common/GridShape";
@@ -20,7 +22,7 @@ export default function SignIn() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://192.168.1.145:8000/login/", {
+      const response = await axios.post(`${config.serverIp}/login/`, {
         email,
         password,
       });

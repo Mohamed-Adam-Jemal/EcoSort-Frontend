@@ -6,6 +6,7 @@ import Label from "../../components/form/Label";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
 import PageMeta from "../../components/common/PageMeta";
 import axios from "axios";
+import config from '../../config';
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -34,7 +35,7 @@ export default function SignUp() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/users/", formData);
+      const response = await axios.post(`${config.serverIp}/users/`, formData);
       setUserData([...userData, response.data]);
       setIsModalOpen(false);
       setFormData({

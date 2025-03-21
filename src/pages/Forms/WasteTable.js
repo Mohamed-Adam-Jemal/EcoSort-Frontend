@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+
+import config from '../../config';
 import axios from "axios"; // Import axios for making HTTP requests
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
@@ -21,7 +23,7 @@ export default function WasteTable() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://192.168.1.145:8000/wastes/");
+        const response = await axios.get(`${config.serverIp}/wastes/`);
         setWasteData(response.data); // Set the fetched data
         setLoading(false); // Set loading to false
       } catch (error) {
@@ -34,7 +36,7 @@ export default function WasteTable() {
 
   // Set up SSE connection for real-time updates
   useEffect(() => {
-    const eventSource = new EventSource("http://192.168.1.145:8000/sse/wastes/");
+    const eventSource = new EventSource(`${config.serverIp}/sse/wastes/`);
 
     // Handle incoming messages
     eventSource.onmessage = (event) => {

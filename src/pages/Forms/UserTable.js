@@ -1,5 +1,5 @@
 "use client";
-
+import config from '../../config';
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import axios for HTTP requests
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
@@ -34,7 +34,7 @@ export default function UserTable() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://192.168.1.145:8000/users/");
+        const response = await axios.get(`${config.serverIp}/users/`);
         setUserData(response.data); // Set the fetched data
         setLoading(false); // Set loading to false
       } catch (error) {
@@ -67,7 +67,7 @@ export default function UserTable() {
   // Handle delete action
   const handleDelete = async (userId) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/users/${userId}/`);
+      await axios.delete(`${config.serverIp}/users/${userId}/`);
       // Remove the deleted user from the state
       setUserData(userData.filter((user) => user.id !== userId));
     } catch (error) {
@@ -94,7 +94,7 @@ export default function UserTable() {
     e.preventDefault();
     try {
       // Send POST request to add a new user
-      const response = await axios.post("http://127.0.0.1:8000/users/", formData);
+      const response = await axios.post(`${config.serverIp}/users/`, formData);
       
       // Add the new user to the state
       setUserData([...userData, response.data]);

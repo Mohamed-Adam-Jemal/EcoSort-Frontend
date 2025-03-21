@@ -1,5 +1,6 @@
 "use client";
 
+import config from '../../config';
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import axios for HTTP requests
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
@@ -35,7 +36,7 @@ export default function SmartBinTable() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/smartbins/");
+        const response = await axios.get(`${config.serverIp}/smartbins/`);
         setSmartBinData(response.data); // Update data
         setLoading(false); // Disable loading
       } catch (error) {
@@ -66,7 +67,7 @@ export default function SmartBinTable() {
   // Handle SmartBin deletion
   const handleDelete = async (smartBinId) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/smartbins/${smartBinId}/`);
+      await axios.delete(`${config.serverIp}/smartbins/${smartBinId}/`);
       // Remove the SmartBin from state
       setSmartBinData(smartBinData.filter((bin) => bin.id !== smartBinId));
     } catch (error) {
@@ -93,7 +94,7 @@ export default function SmartBinTable() {
     e.preventDefault();
     try {
       // Send a POST request to add a new SmartBin
-      const response = await axios.post("http://127.0.0.1:8000/smartbins/", formData);
+      const response = await axios.post(`${config.serverIp}/smartbins/`, formData);
 
       // Add the new SmartBin to the state
       setSmartBinData([...smartBinData, response.data]);
@@ -120,7 +121,7 @@ export default function SmartBinTable() {
 
     try {
       // Send a PATCH request to update the cover status
-      await axios.patch(`http://127.0.0.1:8000/smartbins/${smartBinId}/`, {
+      await axios.patch(`${config.serverIp}/smartbins/${smartBinId}/`, {
         cover: newCoverStatus,
       });
 
