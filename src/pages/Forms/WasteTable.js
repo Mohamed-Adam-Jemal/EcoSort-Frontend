@@ -255,7 +255,9 @@ export default function WasteTable() {
               } border ${
                 theme === "dark" ? "border-gray-600" : "border-gray-300"
               } rounded-md ${
-                currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-600"
+                currentPage === totalPages ? "opacity-50 cursor-not-allowed" : theme === "dark"
+                ? "hover:bg-gray-600"
+                : "hover:bg-gray-50" 
               }`}
             >
               Next
