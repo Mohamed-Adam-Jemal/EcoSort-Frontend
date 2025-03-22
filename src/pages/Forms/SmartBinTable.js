@@ -467,7 +467,7 @@ export default function SmartBinTable() {
                   currentPage === page
                     ? theme === "dark"
                       ? "text-white bg-blue-600 bg-[#4CAF50]"
-                      : "text-white bg-blue-500 border border-blue-500"
+                      : "text-white bg-blue-600 bg-[#4CAF50]"
                     : theme === "dark"
                     ? "text-gray-300 bg-gray-700 border border-gray-600 hover:bg-gray-600"
                     : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
@@ -484,7 +484,7 @@ export default function SmartBinTable() {
               } border ${
                 theme === "dark" ? "border-gray-600" : "border-gray-300"
               } rounded-md ${
-                currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
+                currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-600"
               }`}
             >
               Next
