@@ -137,13 +137,13 @@ const AppSidebar = () => {
               <Link
                 to={nav.path}
                 className={`menu-item group ${
-                  isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
+                  isActive(nav.path) ? "text-[#4CAF50] menu-item-active" : "menu-item-inactive"
                 }`}
               >
                 <span
                   className={`${
                     isActive(nav.path)
-                      ? "menu-item-icon-active"
+                      ? "text-[#4CAF50] menu-item-icon-active"
                       : "menu-item-icon-inactive"
                   }`}
                 >

@@ -117,7 +117,7 @@ export default function SignIn() {
                       </div>
                     </div>
                     <div>
-                      <Button type="submit" className="w-full" size="sm">
+                      <Button type="submit" className="w-full bg-[#4CAF50]/85 hover:bg-[#4CAF50]" size="sm">
                         Sign in
                       </Button>
                     </div>
@@ -129,7 +129,7 @@ export default function SignIn() {
                     Don't have an account? {""}
                     <Link
                       to="/signup"
-                      className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                      className="text-brand-500 hover:text-brand-600 dark:text-brand-400 text-[#4CAF50]"
                     >
                       Sign Up
                     </Link>
