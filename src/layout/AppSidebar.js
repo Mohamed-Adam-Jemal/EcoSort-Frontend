@@ -2,49 +2,41 @@ import React, { useEffect, useCallback, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSidebar } from "../context/SidebarContext";
 import {
-  GridIcon,
   ChevronDownIcon,
   HorizontaLDots,
-  UserCircleIcon,
-  TaskIcon,
-  TrashBinIcon,
-  BoltIcon,
   WasteBotIcon,
   WasteIcon,
   SmartBinIcon,
   ProfileIcon,
-  DashboardIcon,
 } from "../icons";
 
 const navItems = [
-  {
-    icon: <DashboardIcon />,
-    name: "Home",
-    path: "/dashboard",
-  },
-  {
-    name: "Users",
-    icon: <ProfileIcon />,
-    path: "/user-table",
-    roles: ["Admin"], // Only admin can see this item
-  },
   {
     name: "Waste",
     icon: <WasteIcon />,
     path: "/waste-table",
     roles: ["Admin", "Agent"], // Admin and agents can see this
   },
+
+  {
+    name: "SmartBin",
+    icon: <SmartBinIcon />,
+    path: "/smartbin-table",
+    roles: ["Admin", "Agent", "User"], // Everyone can see this
+  },
+
   {
     name: "WasteBot",
     icon: <WasteBotIcon />,
     path: "/wastebot-table",
     roles: ["Admin", "Agent"], // Admin and agents can see this
   },
+  
   {
-    name: "SmartBin",
-    icon: <SmartBinIcon />,
-    path: "/smartbin-table",
-    roles: ["Admin", "Agent", "User"], // Everyone can see this
+    name: "Users",
+    icon: <ProfileIcon />,
+    path: "/user-table",
+    roles: ["Admin"], // Only admin can see this item
   },
 ];
 
@@ -137,13 +129,13 @@ const AppSidebar = () => {
               <Link
                 to={nav.path}
                 className={`menu-item group ${
-                  isActive(nav.path) ? "text-[#4CAF50] menu-item-active" : "menu-item-inactive"
+                  isActive(nav.path) ? "text-[#4CAF50] dark:text-[#4CAF50] menu-item-active" : "menu-item-inactive"
                 }`}
               >
                 <span
                   className={`${
                     isActive(nav.path)
-                      ? "text-[#4CAF50] menu-item-icon-active"
+                      ? "text-[#4CAF50] dark:text-[#4CAF50] menu-item-icon-active"
                       : "menu-item-icon-inactive"
                   }`}
                 >
@@ -192,7 +184,7 @@ const AppSidebar = () => {
             />
             <img
               className="hidden dark:block"
-              src="/images/logo/logo-dark.svg"
+              src="/images/logo/wide-logo-dark.svg"
               alt="Logo"
               width={150}
               height={40}

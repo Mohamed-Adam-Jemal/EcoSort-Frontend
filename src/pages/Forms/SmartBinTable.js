@@ -463,10 +463,10 @@ export default function SmartBinTable() {
               <button
                 key={page}
                 onClick={() => paginate(page)}
-                className={`px-4 py-2 text-sm font-medium ${
+                className={`px-4 py-2 text-sm font-medium bg-[#4CAF50] ${
                   currentPage === page
                     ? theme === "dark"
-                      ? "text-white bg-blue-600 border border-blue-600"
+                      ? "text-white bg-blue-600 bg-[#4CAF50]"
                       : "text-white bg-blue-500 border border-blue-500"
                     : theme === "dark"
                     ? "text-gray-300 bg-gray-700 border border-gray-600 hover:bg-gray-600"

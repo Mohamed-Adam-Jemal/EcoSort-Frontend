@@ -26,7 +26,6 @@ export default function App() {
           {/* Dashboard Layout */}
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
-              <Route path="/dashboard" element={<Ecommerce />} />
               <Route path="/waste-table" element={<WasteTable />} />
               <Route path="/user-table" element={<UserTable />} />
               <Route path="/smartbin-table" element={<SmartBinTable />} />

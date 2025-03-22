@@ -42,7 +42,7 @@ export default function SignIn() {
         localStorage.setItem('role', decodedToken.role);
 
         // Redirect to the dashboard
-        navigate("/dashboard");
+        navigate("/waste-table");
       }
     } catch (error) {
       if (error.response && error.response.data) {
@@ -129,7 +129,7 @@ export default function SignIn() {
                     Don't have an account? {""}
                     <Link
                       to="/signup"
-                      className="text-brand-500 hover:text-brand-600 dark:text-brand-400 text-[#4CAF50]"
+                      className="text-brand-500 text-[#4CAF50] dark:text-[#FFFFFF]"
                     >
                       Sign Up
                     </Link>
