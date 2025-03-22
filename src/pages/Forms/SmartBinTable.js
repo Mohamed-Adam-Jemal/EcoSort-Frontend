@@ -51,7 +51,7 @@ export default function SmartBinTable() {
   // Filter SmartBins based on search query
   const filteredSmartBins = smartBinData.filter((bin) =>
     bin.location.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ).reverse(); // Reverse the order of the data
 
   // Calculate paginated data
   const indexOfLastRow = currentPage * rowsPerPage;

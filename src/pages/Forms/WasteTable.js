@@ -62,7 +62,7 @@ export default function WasteTable() {
   // Filter waste data based on search query
   const filteredWasteData = wasteData.filter((waste) =>
     waste.waste_type && waste.waste_type.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ).reverse(); // Reverse the array to show the latest data first
 
   // Calculate paginated data
   const indexOfLastRow = currentPage * rowsPerPage;

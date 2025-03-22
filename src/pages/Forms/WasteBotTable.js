@@ -50,7 +50,7 @@ export default function WasteBotTable() {
    // Filter WasteBots based on search query
    const filteredWasteBots = wasteBotData.filter((wastebot) =>
     wastebot.location.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ).reverse(); // Reverse the order of the filtered data
 
 
   // Calculate paginated data

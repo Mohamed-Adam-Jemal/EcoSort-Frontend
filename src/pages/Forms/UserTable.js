@@ -51,7 +51,7 @@ export default function UserTable() {
     (user) =>
       user.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.last_name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ).reverse(); // Reverse the order of the filtered users
 
   // Calculate paginated data
   const indexOfLastRow = currentPage * rowsPerPage;
