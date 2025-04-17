@@ -35,11 +35,11 @@ export default function UserTable() {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${config.serverIp}/users/`);
-        setUserData(response.data); // Set the fetched data
-        setLoading(false); // Set loading to false
+        setUserData(response.data);
+        setLoading(false); 
       } catch (error) {
-        setError(error.message); // Set error message
-        setLoading(false); // Set loading to false
+        setError(error.message); 
+        setLoading(false); 
       }
     };
 

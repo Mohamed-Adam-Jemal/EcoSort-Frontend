@@ -8,9 +8,17 @@ import {
   WasteIcon,
   SmartBinIcon,
   ProfileIcon,
+  DashboardIcon
 } from "../icons";
 
 const navItems = [
+  {
+    name: "Home",
+    icon: <DashboardIcon />,
+    path: "/dashboard",
+    roles: ["Admin", "Agent"], // Admin and agents can see this
+  },
+
   {
     name: "Waste",
     icon: <WasteIcon />,
@@ -19,9 +27,9 @@ const navItems = [
   },
 
   {
-    name: "SmartBin",
+    name: "WasteBin",
     icon: <SmartBinIcon />,
-    path: "/smartbin-table",
+    path: "/wastebin-table",
     roles: ["Admin", "Agent", "User"], // Everyone can see this
   },
 
