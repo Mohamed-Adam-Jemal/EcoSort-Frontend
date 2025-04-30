@@ -14,6 +14,7 @@ export default function WasteBinTable() {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
+    Type: "",
     location: "",
     capacity: 0,
   });
@@ -42,7 +43,7 @@ export default function WasteBinTable() {
   // Filter WasteBins
   const filteredWasteBins = wasteBinData.filter((bin) =>
     bin.location.toLowerCase().includes(searchQuery.toLowerCase())
-  ).reverse();
+  );
 
   // Pagination calculations
   const indexOfLastRow = currentPage * rowsPerPage;
@@ -80,6 +81,7 @@ export default function WasteBinTable() {
       setWasteBinData([...wasteBinData, response.data]);
       setIsModalOpen(false);
       setFormData({
+        Type: "",
         location: "",
         capacity: 0,
       });
@@ -140,6 +142,24 @@ export default function WasteBinTable() {
               Add WasteBin
             </h2>
             <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+                <label className={`block text-xs font-medium ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-700"
+                }`}>
+                  Type
+                </label>
+                <input
+                  type="text"
+                  name="type"
+                  value={formData.type}
+                  onChange={handleInputChange}
+                  className={`mt-1 block w-full rounded-md border ${
+                    theme === "dark" ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"
+                  } p-1 text-sm`}
+                  required
+                />
+              </div>
+
               <div className="mb-3">
                 <label className={`block text-xs font-medium ${
                   theme === "dark" ? "text-gray-300" : "text-gray-700"
@@ -254,6 +274,11 @@ export default function WasteBinTable() {
                 <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                   theme === "dark" ? "text-gray-300" : "text-gray-500"
                 }`}>
+                  Type
+                </th>
+                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-500"
+                }`}>
                   Location
                 </th>
                 <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
@@ -281,6 +306,23 @@ export default function WasteBinTable() {
                     theme === "dark" ? "text-gray-100" : "text-gray-900"
                   }`}>
                     {bin.id}
+                  </td>
+                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-500"
+                  }`}>
+                    <span
+                      className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        bin.type === "Plastic"
+                          ? "bg-blue-100 text-blue-800"
+                          : bin.type === "Paper"
+                          ? "bg-green-100 text-green-800"
+                          : bin.type === "Metal"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-purple-100 text-purple-800"
+                      }`}
+                    >
+                      {bin.type.toUpperCase()}
+                    </span>
                   </td>
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"

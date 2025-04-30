@@ -42,15 +42,14 @@ export default function WasteTable() {
     eventSource.onmessage = (event) => {
       const newData = JSON.parse(event.data); // Parse the SSE data
       setWasteData((prevData) => [...prevData, newData]); // Append new data to the existing state
-      setLoading(false); // Set loading to false
+      setLoading(false); 
     };
 
     // Handle errors
     eventSource.onerror = (error) => {
-      setError("Error connecting to the server. Reconnecting..."); // Set error message
-      setLoading(false); // Set loading to false
+      setError("Error connecting to the server. Please try again later."); // Set error message
+      setLoading(false);
       eventSource.close(); // Close the connection
-      // Optionally, you can implement a reconnection logic here
     };
 
     // Cleanup function to close the EventSource connection

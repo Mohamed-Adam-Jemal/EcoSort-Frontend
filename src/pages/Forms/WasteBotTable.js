@@ -75,24 +75,25 @@ export default function WasteBotTable() {
     }
   };
 
-  // Handle toggle WasteBot status (On/Off)
-  const handleToggleStatus = async (wasteBotId, currentStatus) => {
-    try {
-      const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
-      const response = await axios.patch(`${config.serverIp}/wastebots/${wasteBotId}/`, {
-        status: newStatus,
-      });
+  // Handle toggle WasteBot status (Active/Inactive)
+const handleToggleStatus = async (wasteBotId, currentStatus) => {
+  try {
+    const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
+    
+    const response = await axios.patch(`${config.serverIp}/wastebots/${wasteBotId}/`, {
+      status: newStatus
+    });
 
-      // Update the WasteBot status in the state
-      setWasteBotData((prevData) =>
-        prevData.map((bot) =>
-          bot.id === wasteBotId ? { ...bot, status: newStatus } : bot
-        )
-      );
-    } catch (error) {
-      console.error("Error toggling WasteBot status:", error);
-    }
-  };
+    // Update the WasteBot status in the state
+    setWasteBotData(prevData =>
+      prevData.map(bot =>
+        bot.id === wasteBotId ? { ...bot, status: newStatus } : bot
+      )
+    );
+  } catch (error) {
+    console.error("Error toggling WasteBot status:", error);
+  }
+};
 
   // Handle add WasteBot action (open modal)
   const handleAddWasteBot = () => {
