@@ -74,6 +74,7 @@ export default function WasteBinTable() {
     });
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {

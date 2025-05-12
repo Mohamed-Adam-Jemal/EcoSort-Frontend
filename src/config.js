@@ -1,5 +1,5 @@
 const config = {
-    serverIp: "http://192.168.1.4:8000", 
+    serverIp: "http://192.168.1.174:8000", 
   };
   
   export default config;

@@ -192,7 +192,7 @@ export default function WasteTable() {
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"
                   }`}>
-                    {waste.smartbin}
+                    {waste.wastebin}
                   </td>
                   <td className={`px-6 py-4 whitespace-nowrap text-sm ${
                     theme === "dark" ? "text-gray-300" : "text-gray-500"
