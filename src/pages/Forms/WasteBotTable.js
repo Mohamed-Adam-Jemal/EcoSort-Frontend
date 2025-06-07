@@ -140,7 +140,6 @@ const handleToggleStatus = async (wasteBotId, currentStatus) => {
           title="WasteBot Management Dashboard | EcoSort"
           description="This is the WasteBot Management Dashboard page for EcoSort - React.js Tailwind CSS Admin Dashboard Template"
         />
-        <PageBreadcrumb pageTitle="WasteBot Management" />
         <div className="flex justify-center items-center h-64">
           <p className={`text-lg ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
             Loading...
@@ -158,7 +157,6 @@ const handleToggleStatus = async (wasteBotId, currentStatus) => {
           title="WasteBot Management Dashboard | EcoSort"
           description="This is the WasteBot Management Dashboard page for EcoSort - React.js Tailwind CSS Admin Dashboard Template"
         />
-        <PageBreadcrumb pageTitle="WasteBot Management" />
         <div className="flex justify-center items-center h-64">
           <p className={`text-lg text-red-500`}>
             Error: {error}
@@ -174,7 +172,6 @@ const handleToggleStatus = async (wasteBotId, currentStatus) => {
         title="WasteBot Management Dashboard | EcoSort"
         description="This is the WasteBot Management Dashboard page for EcoSort - React.js Tailwind CSS Admin Dashboard Template"
       />
-      <PageBreadcrumb pageTitle="WasteBot Management" />
 
       {/* Modal for adding a WasteBot */}
       {isModalOpen && (
@@ -284,11 +281,6 @@ const handleToggleStatus = async (wasteBotId, currentStatus) => {
             }`}>
               WasteBot Data
             </h2>
-            <p className={`text-sm ${
-              theme === "dark" ? "text-gray-400" : "text-gray-500"
-            }`}>
-              Overview of WasteBot status and assignments.
-            </p>
           </div>
           <div className="flex items-center space-x-4">
             {/* Search Input */}

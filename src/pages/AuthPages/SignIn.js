@@ -145,14 +145,12 @@ export default function SignIn() {
             </div>
           </div>
         </div>
-        <div className="relative items-center justify-center flex-1 hidden p-8 z-1 bg-brand-950 dark:bg-white/5 lg:flex">
-          {/* <!-- ===== Common Grid Shape Start ===== --> */}
-          <GridShape />
+        <div className="relative items-center justify-center flex-1 hidden p-8 z-1 bg-[#384d48] dark:bg-white/5 lg:flex">
           <div className="flex flex-col items-center max-w-xs">
             <Link to="/" className="block mb-4">
-              <img src="./images/logo/auth-logo.svg" alt="Logo" />
+              <img src="./images/logo/wide-logo-dark.svg" alt="Logo" />
             </Link>
-            <p className="text-center text-gray-400 dark:text-white/60">
+            <p className="text-center text-white">
               Powerful and optimized waste management system
             </p>
           </div>

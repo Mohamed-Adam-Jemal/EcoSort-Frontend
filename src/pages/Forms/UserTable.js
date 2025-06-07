@@ -123,7 +123,6 @@ export default function UserTable() {
           title="User Management Dashboard | EcoSort"
           description="This is the User Management Dashboard page for EcoSort - React.js Tailwind CSS Admin Dashboard Template"
         />
-        <PageBreadcrumb pageTitle="Users" />
         <div className="flex justify-center items-center h-64">
           <p className={`text-lg ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
             Loading...
@@ -141,7 +140,6 @@ export default function UserTable() {
           title="User Management Dashboard | EcoSort"
           description="This is the User Management Dashboard page for EcoSort - React.js Tailwind CSS Admin Dashboard Template"
         />
-        <PageBreadcrumb pageTitle="Users" />
         <div className="flex justify-center items-center h-64">
           <p className={`text-lg text-red-500`}>
             Error: {error}
@@ -157,7 +155,6 @@ export default function UserTable() {
         title="User Management Dashboard | EcoSort"
         description="This is the User Management Dashboard page for EcoSort - React.js Tailwind CSS Admin Dashboard Template"
       />
-      <PageBreadcrumb pageTitle="Users" />
 
       {/* Modal for adding a user */}
       {isModalOpen && (
@@ -304,13 +301,8 @@ export default function UserTable() {
             <h2 className={`text-xl font-semibold ${
               theme === "dark" ? "text-gray-100" : "text-gray-800"
             }`}>
-              User Data
+              Users Data
             </h2>
-            <p className={`text-sm ${
-              theme === "dark" ? "text-gray-400" : "text-gray-500"
-            }`}>
-              Overview of registered users.
-            </p>
           </div>
           <div className="flex items-center space-x-4">
             {/* Search Input */}

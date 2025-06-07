@@ -123,8 +123,6 @@ export default function WasteTable() {
         title="Waste Management Dashboard | EcoSort"
         description="Real-time waste collection monitoring dashboard"
       />
-      <PageBreadcrumb pageTitle="Collected Waste" />
-
       {/* Waste Count Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
         {[
@@ -180,7 +178,7 @@ export default function WasteTable() {
             <p className={`text-sm ${
               theme === "dark" ? "text-gray-400" : "text-gray-500"
             }`}>
-              Real-time overview of waste collected by WasteBots
+              Real-time data of waste collected by WasteBots
             </p>
           </div>
           <div className="w-full md:w-auto">

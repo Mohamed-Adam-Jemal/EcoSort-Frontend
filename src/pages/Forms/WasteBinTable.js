@@ -98,7 +98,6 @@ export default function WasteBinTable() {
           title="WasteBin Management Dashboard | EcoSort"
           description="WasteBin management page"
         />
-        <PageBreadcrumb pageTitle="WasteBin Management" />
         <div className="flex justify-center items-center h-64">
           <p className={`text-lg ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
             Loading...
@@ -115,7 +114,6 @@ export default function WasteBinTable() {
           title="WasteBin Management Dashboard | EcoSort"
           description="WasteBin management page"
         />
-        <PageBreadcrumb pageTitle="WasteBin Management" />
         <div className="flex justify-center items-center h-64">
           <p className={`text-lg text-red-500`}>Error: {error}</p>
         </div>
@@ -129,7 +127,6 @@ export default function WasteBinTable() {
         title="WasteBin Management Dashboard | EcoSort"
         description="WasteBin management page"
       />
-      <PageBreadcrumb pageTitle="WasteBin Management" />
 
       {/* Add WasteBin Modal */}
       {isModalOpen && (
@@ -232,13 +229,8 @@ export default function WasteBinTable() {
             <h2 className={`text-xl font-semibold ${
               theme === "dark" ? "text-gray-100" : "text-gray-800"
             }`}>
-              WasteBin Data
+              WasteBins Data
             </h2>
-            <p className={`text-sm ${
-              theme === "dark" ? "text-gray-400" : "text-gray-500"
-            }`}>
-              Overview of WasteBin status and assignments.
-            </p>
           </div>
           <div className="flex items-center space-x-4">
             <input
