@@ -8,9 +8,9 @@ import Input from "../../components/form/input/InputField";
 import Label from "../../components/form/Label";
 import { Link } from "react-router-dom";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
-import Button from "../../components/ui/button/Button";
 import PageMeta from "../../components/common/PageMeta";
 import { jwtDecode } from "jwt-decode";
+import { ThemeToggleButton } from "../../components/common/ThemeToggleButton";
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
@@ -63,6 +63,9 @@ export default function SignIn() {
       />
       <div className="relative flex w-full h-screen px-4 py-6 overflow-hidden bg-white z-1 dark:bg-gray-900 sm:p-0">
         <div className="flex flex-col flex-1 p-6 rounded-2xl sm:rounded-none sm:border-0 sm:p-8">
+          <div className="absolute top-6 right-6 z-10">
+            <ThemeToggleButton />
+          </div>
           <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
             <div>
               <div className="mb-5 sm:mb-8">
@@ -117,9 +120,12 @@ export default function SignIn() {
                       </div>
                     </div>
                     <div>
-                      <Button type="submit" className="w-full bg-[#4CAF50]/85 hover:bg-[#4CAF50]" size="sm">
-                        Sign in
-                      </Button>
+                      <button
+                        type="submit"
+                        className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-[#4CAF50]/85  shadow-theme-xs hover:hover:bg-[#4CAF50]"
+                      >
+                        Sign Up
+                      </button>
                     </div>
                   </div>
                 </form>
@@ -129,7 +135,7 @@ export default function SignIn() {
                     Don't have an account? {""}
                     <Link
                       to="/signup"
-                      className="text-brand-500 text-[#4CAF50] dark:text-[#FFFFFF]"
+                      className="text-[#4CAF50] dark:text-[#FFFFFF]"
                     >
                       Sign Up
                     </Link>

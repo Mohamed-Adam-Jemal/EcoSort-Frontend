@@ -6,7 +6,7 @@ import axios from "axios";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { useTheme } from "../../context/ThemeContext";
-import { FaTrash, FaPlus, FaPowerOff } from "react-icons/fa";
+import { FaTrash, FaPlus} from "react-icons/fa";
 
 export default function WasteBinTable() {
   const [wasteBinData, setWasteBinData] = useState([]);
@@ -14,7 +14,7 @@ export default function WasteBinTable() {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    Type: "",
+    type: "",
     location: "",
     capacity: 0,
   });
@@ -381,15 +381,13 @@ export default function WasteBinTable() {
               <button
                 key={page}
                 onClick={() => paginate(page)}
-                className={`px-4 py-2 text-sm font-medium ${
+                className={`px-4 py-2 text-sm font-medium rounded-md ${
                   currentPage === page
-                    ? theme === "dark"
-                      ? "text-white bg-blue-600"
-                      : "text-white bg-blue-600"
+                    ? "text-white bg-[#4CAF50]"
                     : theme === "dark"
                     ? "text-gray-300 bg-gray-700 border border-gray-600 hover:bg-gray-600"
                     : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
-                } rounded-md`}
+                }`}
               >
                 {page}
               </button>

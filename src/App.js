@@ -3,13 +3,13 @@ import AppLayout from "./layout/AppLayout";
 import AuthLayout from "./layout/AuthLayout";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
-import Ecommerce from "./pages/Dashboard/ECommerce";
-import NotFound from "./pages/OtherPage/NotFound";
+import NotFound from "./pages/OtherPage/NotFoundPage";
 import WasteTable from "./pages/Forms/WasteTable";
 import UserTable from "./pages/Forms/UserTable";
 import WasteBinTable from "./pages/Forms/WasteBinTable";
 import WasteBotTable from "./pages/Forms/WasteBotTable";
 import ProtectedRoute from "./components/ProtectedRoute";
+import NotFoundPage from "./pages/OtherPage/NotFoundPage";
 
 export default function App() {
   return (
@@ -22,7 +22,6 @@ export default function App() {
           {/* Dashboard Layout */}
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
-              <Route path="/dashboard" element={<Ecommerce />} />
               <Route path="/waste-table" element={<WasteTable />} />
               <Route path="/user-table" element={<UserTable />} />
               <Route path="/wastebin-table" element={<WasteBinTable />} />
@@ -37,7 +36,7 @@ export default function App() {
           </Route>
 
           {/* Fallback Route */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>
     </>

@@ -12,34 +12,28 @@ import {
 } from "../icons";
 
 const navItems = [
-  {
-    name: "Home",
-    icon: <DashboardIcon />,
-    path: "/dashboard",
-    roles: ["Admin", "Agent"], // Admin and agents can see this
-  },
 
   {
     name: "Waste",
     icon: <WasteIcon />,
     path: "/waste-table",
-    roles: ["Admin", "Agent"], // Admin and agents can see this
+    roles: ["Admin", "Agent", "User"], // Admin and agents can see this
   },
 
   {
-    name: "WasteBin",
+    name: "WasteBins",
     icon: <SmartBinIcon />,
     path: "/wastebin-table",
     roles: ["Admin", "Agent", "User"], // Everyone can see this
   },
 
   {
-    name: "WasteBot",
+    name: "WasteBots",
     icon: <WasteBotIcon />,
     path: "/wastebot-table",
     roles: ["Admin", "Agent"], // Admin and agents can see this
   },
-  
+
   {
     name: "Users",
     icon: <ProfileIcon />,

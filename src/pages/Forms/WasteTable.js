@@ -1,98 +1,177 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import config from '../../config';
-import axios from "axios"; // Import axios for making HTTP requests
+import axios from "axios";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
-import { useTheme } from "../../context/ThemeContext"; // Import the useTheme hook
+import { useTheme } from "../../context/ThemeContext";
 
 export default function WasteTable() {
-  const [wasteData, setWasteData] = useState([]); // State to store waste data
-  const [loading, setLoading] = useState(true); // State to handle loading
-  const [error, setError] = useState(null); // State to handle errors
-  const [searchQuery, setSearchQuery] = useState(""); // State for search functionality
-
-  // Pagination state
+  const [wasteData, setWasteData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage] = useState(5); // Number of rows per page
-
-  // Use the theme context
+  const [rowsPerPage] = useState(5);
   const { theme } = useTheme();
 
-  // Fetch waste data from the backend
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${config.serverIp}/wastes/`);
-        setWasteData(response.data); // Set the fetched data
-        setLoading(false); // Set loading to false
-      } catch (error) {
-        setError(error.message); // Set error message
-        setLoading(false); // Set loading to false
-      }
-    };
-    fetchData();
-  }, []);
+  // Memoized waste counts for better performance
+  const wasteCounts = useMemo(() => ({
+    plastic: wasteData.filter(waste => waste.waste_type?.toUpperCase() === 'PLASTIC').length,
+    paper: wasteData.filter(waste => waste.waste_type?.toUpperCase() === 'PAPER').length,
+    glass: wasteData.filter(waste => waste.waste_type?.toUpperCase() === 'GLASS').length,
+    metal: wasteData.filter(waste => waste.waste_type?.toUpperCase() === 'METAL').length,
+    total: wasteData.length
+  }), [wasteData]);
 
-  // Set up SSE connection for real-time updates
-  useEffect(() => {
-    const eventSource = new EventSource(`${config.serverIp}/sse/wastes/`);
-
-    // Handle incoming messages
-    eventSource.onmessage = (event) => {
-      const newData = JSON.parse(event.data); // Parse the SSE data
-      setWasteData((prevData) => [...prevData, newData]); // Append new data to the existing state
-      setLoading(false); 
-    };
-
-    // Handle errors
-    eventSource.onerror = (error) => {
-      setError("Error connecting to the server. Please try again later."); // Set error message
+  // Fetch initial waste data
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await axios.get(`${config.serverIp}/waste/`);
+      setWasteData(response.data);
       setLoading(false);
-      eventSource.close(); // Close the connection
+    } catch (error) {
+      console.error('Fetch error:', error);
+      setError(error.response?.data?.message || error.message);
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // SSE for real-time updates with reconnection logic
+  useEffect(() => {
+    let eventSource;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 5;
+    const reconnectDelay = 5000; // 5 seconds
+
+    const setupSSE = () => {
+      eventSource = new EventSource(`${config.serverIp}/sse/waste/`);
+
+      eventSource.onmessage = (event) => {
+        const newData = JSON.parse(event.data);
+        setWasteData(prevData => {
+          // Check for duplicates before adding
+          if (!prevData.some(item => item.id === newData.id)) {
+            return [newData, ...prevData]; // Newest first
+          }
+          return prevData;
+        });
+        reconnectAttempts = 0; // Reset on successful message
+      };
+
+      eventSource.onerror = () => {
+        eventSource.close();
+        if (reconnectAttempts < maxReconnectAttempts) {
+          setTimeout(setupSSE, reconnectDelay);
+          reconnectAttempts++;
+        } else {
+          setError("Connection lost. Please refresh the page.");
+        }
+      };
     };
 
-    // Cleanup function to close the EventSource connection
+    setupSSE();
+
     return () => {
-      eventSource.close();
+      if (eventSource) eventSource.close();
     };
   }, []);
 
-  // Filter waste data based on search query
-  const filteredWasteData = wasteData.filter((waste) =>
-    waste.waste_type && waste.waste_type.toLowerCase().includes(searchQuery.toLowerCase())
-  ).reverse(); // Reverse the array to show the latest data first
+  // Filter and sort waste data
+  const filteredWasteData = useMemo(() => {
+    return wasteData
+      .filter((waste) => 
+        waste.waste_type?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .sort((a, b) => new Date(b.time_collected) - new Date(a.time_collected)); // Newest first
+  }, [wasteData, searchQuery]);
 
-  // Calculate paginated data
+  // Pagination calculations
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = filteredWasteData.slice(indexOfFirstRow, indexOfLastRow);
-
-  // Change page
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  // Calculate total number of pages
   const totalPages = Math.ceil(filteredWasteData.length / rowsPerPage);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  const paginate = useCallback((pageNumber) => {
+    setCurrentPage(Math.max(1, Math.min(pageNumber, totalPages)));
+  }, [totalPages]);
+
+  if (loading) return (
+    <div className={`p-6 ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"} min-h-screen flex items-center justify-center`}>
+      <div className="animate-pulse">Loading waste data...</div>
+    </div>
+  );
+
+  if (error) return (
+    <div className={`p-6 ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"} min-h-screen flex items-center justify-center`}>
+      <div className="text-red-500">{error}</div>
+      <button 
+        onClick={fetchData}
+        className="ml-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Retry
+      </button>
+    </div>
+  );
 
   return (
     <div className={`p-6 ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"} min-h-screen`}>
       <PageMeta
         title="Waste Management Dashboard | EcoSort"
-        description="This is the Waste Management Dashboard page for EcoSort - React.js Tailwind CSS Admin Dashboard Template"
+        description="Real-time waste collection monitoring dashboard"
       />
       <PageBreadcrumb pageTitle="Collected Waste" />
 
-      <div className={`rounded-lg shadow-md overflow-hidden ${
+      {/* Waste Count Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
+        {[
+          { type: 'plastic', label: 'Plastic Waste', count: wasteCounts.plastic },
+          { type: 'paper', label: 'Paper Waste', count: wasteCounts.paper },
+          { type: 'glass', label: 'Glass Waste', count: wasteCounts.glass },
+          { type: 'metal', label: 'Metal Waste', count: wasteCounts.metal },
+          { type: 'total', label: 'Total Waste', count: wasteCounts.total },
+        ].map((card) => (
+          <div 
+            key={card.type}
+            className={`rounded-lg shadow-md p-6 transition-all duration-300 hover:shadow-lg ${
+              theme === "dark" ? "bg-gray-800" : "bg-white"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className={`text-sm font-medium ${
+                  theme === "dark" ? "text-gray-400" : "text-gray-500"
+                }`}>{card.label}</p>
+                <h3 className={`text-2xl font-bold ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}>{card.count}</h3>
+              </div>
+              {card.type !== 'total' && (
+                <span className={`text-xs px-2 py-1 rounded-full ${
+                  card.type === 'plastic' ? 'bg-blue-100 text-blue-800' :
+                  card.type === 'paper' ? 'bg-green-100 text-green-800' :
+                  card.type === 'glass' ? 'bg-purple-100 text-purple-800' :
+                  'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {Math.round((card.count / wasteCounts.total) * 100)}%
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Waste Table */}
+      <div className={`rounded-lg shadow-md overflow-hidden transition-colors duration-300 ${
         theme === "dark" ? "bg-gray-800" : "bg-white"
       }`}>
-        {/* Header with Search Input */}
-        <div className={`flex items-center justify-between p-6 border-b ${
+        <div className={`flex flex-col md:flex-row items-center justify-between p-6 border-b ${
           theme === "dark" ? "border-gray-700" : "border-gray-200"
         }`}>
-          <div>
+          <div className="mb-4 md:mb-0">
             <h2 className={`text-xl font-semibold ${
               theme === "dark" ? "text-gray-100" : "text-gray-800"
             }`}>
@@ -101,121 +180,117 @@ export default function WasteTable() {
             <p className={`text-sm ${
               theme === "dark" ? "text-gray-400" : "text-gray-500"
             }`}>
-              Overview of waste collected by WasteBots.
+              Real-time overview of waste collected by WasteBots
             </p>
           </div>
-          <div>
-            {/* Search Input */}
+          <div className="w-full md:w-auto">
             <input
               type="text"
               placeholder="Search by waste type..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={`p-2 rounded-md border ${
-                theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-100" : "bg-white border-gray-300 text-gray-700"
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1); // Reset to first page on search
+              }}
+              className={`w-full p-2 rounded-md border ${
+                theme === "dark" ? "bg-gray-700 border-gray-600 text-gray-100" : 
+                "bg-white border-gray-300 text-gray-700"
               }`}
             />
           </div>
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className={`${
               theme === "dark" ? "bg-gray-700" : "bg-gray-50"
             }`}>
               <tr>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                  theme === "dark" ? "text-gray-300" : "text-gray-500"
-                }`}>
-                  Waste ID
-                </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                  theme === "dark" ? "text-gray-300" : "text-gray-500"
-                }`}>
-                  Type
-                </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                  theme === "dark" ? "text-gray-300" : "text-gray-500"
-                }`}>
-                  Time of Picking
-                </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                  theme === "dark" ? "text-gray-300" : "text-gray-500"
-                }`}>
-                  WasteBin ID
-                </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                  theme === "dark" ? "text-gray-300" : "text-gray-500"
-                }`}>
-                  WasteBot ID
-                </th>
+                {['Waste ID', 'Type', 'Time of Picking', 'WasteBin ID', 'WasteBot ID'].map((header) => (
+                  <th 
+                    key={header}
+                    className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-500"
+                    }`}
+                  >
+                    {header}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className={`divide-y ${
               theme === "dark" ? "divide-gray-700" : "divide-gray-200"
             }`}>
-              {currentRows.map((waste) => (
-                <tr
-                  key={waste.id}
-                  className={`${
-                    theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-50"
-                  } transition-colors duration-200`}
-                >
-                  <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${
-                    theme === "dark" ? "text-gray-100" : "text-gray-900"
+              {currentRows.length > 0 ? (
+                currentRows.map((waste) => (
+                  <tr
+                    key={waste.id}
+                    className={`${
+                      theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-50"
+                    } transition-colors duration-200`}
+                  >
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${
+                      theme === "dark" ? "text-gray-100" : "text-gray-900"
+                    }`}>
+                      {waste.id}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                          waste.waste_type?.toLowerCase() === "plastic"
+                            ? "bg-blue-100 text-blue-800"
+                            : waste.waste_type?.toLowerCase() === "paper"
+                            ? "bg-green-100 text-green-800"
+                            : waste.waste_type?.toLowerCase() === "metal"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-purple-100 text-purple-800"
+                        }`}
+                      >
+                        {waste.waste_type?.toUpperCase()}
+                      </span>
+                    </td>
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-500"
+                    }`}>
+                      {new Date(waste.time_collected).toLocaleString()}
+                    </td>
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-500"
+                    }`}>
+                      {waste.wastebin}
+                    </td>
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-500"
+                    }`}>
+                      {waste.wastebot}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className={`px-6 py-4 text-center ${
+                    theme === "dark" ? "text-gray-400" : "text-gray-500"
                   }`}>
-                    {waste.id}
-                  </td>
-                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-500"
-                  }`}>
-                    <span
-                      className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        waste.waste_type === "plastic"
-                          ? "bg-blue-100 text-blue-800"
-                          : waste.waste_type === "paper"
-                          ? "bg-green-100 text-green-800"
-                          : waste.waste_type === "metal"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-purple-100 text-purple-800"
-                      }`}
-                    >
-                      {waste.waste_type.toUpperCase()}
-                    </span>
-                  </td>
-                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-500"
-                  }`}>
-                    {waste.time_collected}
-                  </td>
-                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-500"
-                  }`}>
-                    {waste.wastebin}
-                  </td>
-                  <td className={`px-6 py-4 whitespace-nowrap text-sm ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-500"
-                  }`}>
-                    {waste.wastebot}
+                    No waste data found
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Pagination */}
-        <div className={`flex justify-between items-center p-4 border-t ${
-          theme === "dark" ? "border-gray-700" : "border-gray-200"
-        }`}>
-          <div className={`text-sm ${
-            theme === "dark" ? "text-gray-400" : "text-gray-500"
+        {filteredWasteData.length > 0 && (
+          <div className={`flex flex-col md:flex-row justify-between items-center p-4 border-t ${
+            theme === "dark" ? "border-gray-700" : "border-gray-200"
           }`}>
-            Showing {indexOfFirstRow + 1} to {Math.min(indexOfLastRow, filteredWasteData.length)} of{" "}
-            {filteredWasteData.length} entries
-          </div>
-          <div className="flex space-x-2">
+            <div className={`text-sm mb-4 md:mb-0 ${
+              theme === "dark" ? "text-gray-400" : "text-gray-500"
+            }`}>
+              Showing {indexOfFirstRow + 1} to {Math.min(indexOfLastRow, filteredWasteData.length)} of{" "}
+              {filteredWasteData.length} entries
+            </div>
+            <div className="flex space-x-2">
             <button
               onClick={() => paginate(currentPage - 1)}
               disabled={currentPage === 1}
@@ -233,18 +308,17 @@ export default function WasteTable() {
               <button
                 key={page}
                 onClick={() => paginate(page)}
-                className={`px-4 py-2 text-sm font-medium ${
+                className={`px-4 py-2 text-sm font-medium rounded-md ${
                   currentPage === page
-                    ? theme === "dark"
-                      ? "text-white bg-blue-600 bg-[#4CAF50]"
-                      : "text-white bg-blue-600 bg-[#4CAF50]"
+                    ? "text-white bg-[#4CAF50]"
                     : theme === "dark"
                     ? "text-gray-300 bg-gray-700 border border-gray-600 hover:bg-gray-600"
                     : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
-                } rounded-md`}
+                }`}
               >
                 {page}
               </button>
+
             ))}
             <button
               onClick={() => paginate(currentPage + 1)}
@@ -262,7 +336,8 @@ export default function WasteTable() {
               Next
             </button>
           </div>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

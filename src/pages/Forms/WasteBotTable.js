@@ -466,15 +466,13 @@ const handleToggleStatus = async (wasteBotId, currentStatus) => {
               <button
                 key={page}
                 onClick={() => paginate(page)}
-                className={`px-4 py-2 text-sm font-medium ${
+                className={`px-4 py-2 text-sm font-medium rounded-md ${
                   currentPage === page
-                    ? theme === "dark"
-                      ? "text-white bg-blue-600 bg-[#4CAF50]"
-                      : "text-white bg-blue-600 bg-[#4CAF50]"
+                    ? "text-white bg-[#4CAF50]"
                     : theme === "dark"
                     ? "text-gray-300 bg-gray-700 border border-gray-600 hover:bg-gray-600"
                     : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
-                } rounded-md`}
+                }`}
               >
                 {page}
               </button>

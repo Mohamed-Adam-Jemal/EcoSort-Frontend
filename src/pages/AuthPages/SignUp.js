@@ -7,6 +7,7 @@ import { EyeCloseIcon, EyeIcon } from "../../icons";
 import PageMeta from "../../components/common/PageMeta";
 import axios from "axios";
 import config from '../../config';
+import { ThemeToggleButton } from "../../components/common/ThemeToggleButton";
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,7 +16,7 @@ export default function SignUp() {
     last_name: "",
     email: "",
     password: "",
-    role: "",
+    role: "User",
     date_joined: "",
   });
   const [error, setError] = useState(null);
@@ -61,6 +62,9 @@ export default function SignUp() {
       />
       <div className="relative flex w-full h-screen overflow-hidden bg-white z-1 dark:bg-gray-900">
         <div className="flex flex-col flex-1 p-6 rounded-2xl sm:rounded-none sm:border-0 sm:p-8">
+          <div className="absolute top-6 right-6 z-10">
+            <ThemeToggleButton />
+          </div>
           <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
             <div className="mb-5 sm:mb-8">
               <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
@@ -134,25 +138,6 @@ export default function SignUp() {
                 </div>
 
 
-                {/* Role field*/}
-                <div className="flex space-x-4 mb-3">
-                  <div className="w-full">
-                    <Label htmlFor="role">Role</Label>
-                    <select
-                      name="role"
-                      value={formData.role}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-1 block w-full rounded-md border bg-white border-gray-300 p-2 text-sm"
-                    >
-                      <option value="" disabled>
-                        Select a role
-                      </option>
-                      <option value="Agent">Agent</option>
-                      <option value="User">User</option>
-                    </select>
-                  </div>
-                </div>
 
                 {/* Error Message */}
                 {error && <div className="text-sm text-red-500">{error}</div>}
@@ -161,7 +146,7 @@ export default function SignUp() {
                 <div>
                   <button
                     type="submit"
-                    className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
+                    className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-[#4CAF50]/85  shadow-theme-xs hover:hover:bg-[#4CAF50]"
                   >
                     Sign Up
                   </button>
@@ -171,10 +156,10 @@ export default function SignUp() {
 
             <div className="mt-5">
               <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-                Already have an account?
+                Already have an account? {""}
                 <Link
                   to="/signin"
-                  className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                  className="text-[#4CAF50] dark:text-[#FFFFFF]"
                 >
                   Sign In
                 </Link>
@@ -183,10 +168,9 @@ export default function SignUp() {
           </div>
         </div>
         <div className="relative items-center justify-center flex-1 hidden p-8 z-1 bg-brand-950 dark:bg-white/5 lg:flex">
-          <GridShape />
           <div className="flex flex-col items-center max-w-xs">
             <Link to="/" className="block mb-4">
-              <img src="./images/logo/auth-logo.svg" alt="Logo" />
+              <img src="./images/logo/wide-logo.svg" alt="Logo" />
             </Link>
             <p className="text-center text-gray-400 dark:text-white/60">
               Powerful and optimized waste management system
