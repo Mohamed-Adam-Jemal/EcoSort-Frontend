@@ -124,7 +124,7 @@ export default function SignIn() {
                         type="submit"
                         className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-[#4CAF50]/85  shadow-theme-xs hover:hover:bg-[#4CAF50]"
                       >
-                        Sign Up
+                        Sign In
                       </button>
                     </div>
                   </div>

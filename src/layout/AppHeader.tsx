@@ -85,15 +85,15 @@ const AppHeader: React.FC = () => {
           <div className="lg:hidden">
             <img
               className="block dark:hidden"
-              src="./images/logo/wide-logo.svg"
+              src="./images/logo/logo.svg"
               alt="Logo"
-              width="150"
+              width="50"
             />
             <img
               className="hidden dark:block"
-              src="./images/logo/wide-logo-dark.svg"
+              src="./images/logo/logo.svg"
               alt="Logo"
-              width="150"
+              width="50"
             />
           </div>
 

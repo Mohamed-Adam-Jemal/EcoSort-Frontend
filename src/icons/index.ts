@@ -55,8 +55,10 @@ import { ReactComponent as SmartBinIcon } from "./smartbin-icon.svg";
 import { ReactComponent as WasteIcon } from "./waste-icon.svg";
 import { ReactComponent as DashboardIcon } from "./dashboard-icon.svg";
 import { ReactComponent as ProfileIcon } from "./user-icon.svg";
+import { ReactComponent as CrumpledPaper } from "./crumpled-paper.svg";
 
 export {
+  CrumpledPaper,
   DownloadIcon,
   FileIcon,
   GridIcon,

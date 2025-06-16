@@ -8,14 +8,14 @@ import {
   WasteIcon,
   SmartBinIcon,
   ProfileIcon,
-  DashboardIcon
+  CrumpledPaper,
 } from "../icons";
 
 const navItems = [
 
   {
     name: "Waste",
-    icon: <WasteIcon />,
+    icon: <CrumpledPaper />,
     path: "/waste-table",
     roles: ["Admin", "Agent", "User"], // Admin and agents can see this
   },
